@@ -1,5 +1,8 @@
-import { Box, Typography, styled } from '@mui/material'
+import { Box, Typography, keyframes, styled } from '@mui/material'
 import Button from 'components/Button/ActionButton'
+import Float from 'assets/images/floater.png'
+import Image from 'components/Image'
+
 const UrlCon = styled(Box)({
   display: 'flex',
   flexDirection: 'column',
@@ -7,12 +10,43 @@ const UrlCon = styled(Box)({
   gap: 10
 })
 
+const float = keyframes`
+  50%{
+    transform: translate(0, 20px);
+  }
+`
+
+const float1 = keyframes`
+  50%{
+    transform: translate(0, -20px);
+  }
+`
+
 export default function Home() {
   return (
     <Box
       sx={{
+        position: 'relative',
         width: '100%',
-        overflowX: 'auto'
+        overflowX: 'auto',
+        '& .flowL': {
+          animation: `${float} 3s ease-out infinite`,
+          position: 'absolute',
+          left: 68,
+          top: 20,
+          '&:before': {
+            animation: 'shrink 3s ease-out infinite, floatUp 3s ease-out infinite'
+          }
+        },
+        '& .flowR': {
+          animation: `${float1} 3s ease-out infinite`,
+          position: 'absolute',
+          right: 68,
+          bottom: 20,
+          '&:before': {
+            animation: 'shrink 3s ease-out infinite, floatUp 3s ease-out infinite'
+          }
+        }
       }}
     >
       <Box>
@@ -136,6 +170,8 @@ export default function Home() {
           </Box>
         </Box>
       </Box>
+      <Image className="flowL" src={Float} />
+      <Image className="flowR" src={Float} />
     </Box>
   )
 }

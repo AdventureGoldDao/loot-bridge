@@ -63,7 +63,7 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     fontWeight: 500,
     marginRight: 48,
     // paddingBottom: '30px',
-    borderBottom: '2px solid transparent',
+    // borderBottom: '2px solid transparent',
     '&.active': {
       opacity: 1,
       borderColor: theme.palette.text.primary

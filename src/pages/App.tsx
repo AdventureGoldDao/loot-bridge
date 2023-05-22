@@ -10,6 +10,7 @@ import ComingSoon from './ComingSoon'
 import { ModalProvider } from 'context/ModalContext'
 import { routes } from 'constants/routes'
 import Home from './Home'
+import Explorer from './Explorer'
 // import Footer from 'components/Footer'
 import BG from 'assets/images/home-bg.png'
 
@@ -38,8 +39,9 @@ const BodyWrapper = styled('div')(({ theme }) => ({
   flexDirection: 'column',
   width: '100%',
   minHeight: `calc(100vh - ${theme.height.header})`,
+  height: '100%',
   // padding: '50px 0 80px',
-  padding: '0px 0 80px',
+  // padding: '0px 0 80px',
   justifyContent: 'center',
   alignItems: 'center',
   flex: 1,
@@ -67,7 +69,7 @@ export default function App() {
                 <Routes>
                   <Route path={routes.HOME} element={<Home />} />
                   <Route path={routes.BRIDGE} element={<ComingSoon />} />
-                  <Route path={routes.EXPLORER} element={<ComingSoon />} />
+                  <Route path={routes.EXPLORER} element={<Explorer />} />
                   <Route path="/" element={<Navigate to={routes.HOME} replace />} />
                 </Routes>
               </Web3ReactManager>

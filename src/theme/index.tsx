@@ -232,7 +232,7 @@ export const override: any = {
     styleOverrides: {
       root: {
         lineHeight: 1.2,
-        fontFamily: 'Roboto, -apple-system, BlinkMacSystemFont, sans-serif!important'
+        fontFamily: 'Inconsolata!important'
       },
       body1: {
         fontSize: 14
