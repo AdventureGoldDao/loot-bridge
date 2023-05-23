@@ -52,7 +52,7 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
   boxShadow: 'none',
   padding: '0 50px!important',
   zIndex: theme.zIndex.drawer,
-  borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
+  // borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
   '& .link': {
     display: 'flex',
     gap: 6,

@@ -1,6 +1,7 @@
 import { Box, styled, Typography } from '@mui/material'
 import TransactionCard from './components/TransactionCard'
 import Footer from './components/Footer'
+import TransactionItem from './components/TransactionItem'
 
 const UrlCon = styled(Box)({
   display: 'flex',
@@ -34,28 +35,57 @@ const transactionList = [
     amount: 1,
     time: '17 days ago',
     miner: 'Miner',
-    account: '0xf40345eb78d2dc5dc4bdf5504d0b57d90a7a80a3e8235d17ae1df32dd683cf79'
+    account: '0x02B2F2C05E63461FF05f462CB303d1f05ef1A179'
   },
   {
     taskName: 'Task name 002',
     amount: 1,
     time: '27 days ago',
     miner: 'Miner',
-    account: '0xf40345eb78d2dc5dc4bdf5504d0b57d90a7a80a3e8235d17ae1df32dd683cf79'
+    account: '0x02B2F2C05E63461FF05f462CB303d1f05ef1A179'
   },
   {
     taskName: 'Task name 003',
     amount: 1,
     time: '27 days ago',
     miner: 'Miner',
-    account: '0xf40345eb78d2dc5dc4bdf5504d0b57d90a7a80a3e8235d17ae1df32dd683cf79'
+    account: '0x02B2F2C05E63461FF05f462CB303d1f05ef1A179'
   },
   {
     taskName: 'Task name 004',
     amount: 1,
     time: '27 days ago',
     miner: 'Miner',
-    account: '0xf40345eb78d2dc5dc4bdf5504d0b57d90a7a80a3e8235d17ae1df32dd683cf79'
+    account: '0x02B2F2C05E63461FF05f462CB303d1f05ef1A179'
+  }
+]
+
+const txList = [
+  {
+    actionText: 'Transaction Success!',
+    amount: 1,
+    unit: 'AGLD',
+    time: '17 days ago',
+    blockNum: 10,
+    txHash: '0xf40345eb78d2dc5dc4bdf5504d0b57d90a7a80a3e8235d17ae1df32dd683cf79',
+    from: '0x02B2F2C05E63461FF05f462CB303d1f05ef1A179',
+    to: '0x02B2F2C05E63461FF05f462CB303d1f05ef1A179',
+    type: 'Transfer',
+    fee: '0.00067',
+    feeToAGLD: '1'
+  },
+  {
+    actionText: 'Token Burning Success!',
+    amount: 1,
+    unit: 'AGLD',
+    time: '17 days ago',
+    blockNum: 10,
+    txHash: '0xf40345eb78d2dc5dc4bdf5504d0b57d90a7a80a3e8235d17ae1df32dd683cf79',
+    from: '0x02B2F2C05E63461FF05f462CB303d1f05ef1A179',
+    to: '0x02B2F2C05E63461FF05f462CB303d1f05ef1A179',
+    type: 'Deposit',
+    fee: '',
+    feeToAGLD: '1'
   }
 ]
 
@@ -166,12 +196,12 @@ export default function Explorer() {
           sx={{
             padding: '10px 24px 24px',
             display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between'
+            gap: 10,
+            flexDirection: 'column'
           }}
         >
-          {transactionList.map(item => (
-            <TransactionCard key={item.taskName} {...item} />
+          {txList.map(item => (
+            <TransactionItem key={item.actionText} {...item} />
           ))}
         </Box>
       </Box>
