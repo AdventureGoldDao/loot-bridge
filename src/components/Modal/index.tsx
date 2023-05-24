@@ -72,7 +72,11 @@ export default function Modal(props: Props) {
               overflowX: 'hidden',
               position: 'absolute',
               overflowY: 'auto',
-              maxHeight: theme => `calc(100vh - ${theme.height.header})`
+              maxHeight: theme => `calc(100vh - ${theme.height.header})`,
+              '&::-webkit-scrollbar': {
+                display: 'none',
+                width: 0
+              }
             },
             ...(!isCardOnMobile
               ? {

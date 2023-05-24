@@ -85,7 +85,7 @@ export default function CurrencyInputPanel({
 
   const showCurrencySearch = useCallback(() => {
     if (!disableCurrencySelect) {
-      showModal(<SelectCurrencyModal onSelectCurrency={onSelectCurrency} />)
+      showModal(<SelectCurrencyModal onSelectCurrency={onSelectCurrency} currencyOptions={[]} />)
     }
   }, [disableCurrencySelect, onSelectCurrency, showModal])
 

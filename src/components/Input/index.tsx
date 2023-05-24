@@ -138,11 +138,10 @@ export default function Input({
         sx={{
           minHeight: height || 50,
           [`&.${inputBaseClasses.root}`]: {
+            border: outlined ? '1px solid #3C5141' : 'none',
             backgroundColor: backgroundColor || 'transparent'
           },
-          [`&.${inputBaseClasses.focused}`]: {
-            border: outlined ? 'none' : 'unset'
-          },
+          [`&.${inputBaseClasses.focused}`]: {},
           [`& .${inputBaseClasses.input}`]: {
             '&::placeholder': {
               fontSize: smallPlaceholder ? 13 : 16,

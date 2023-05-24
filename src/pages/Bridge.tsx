@@ -10,9 +10,7 @@ import {
   Paper,
   Table,
   TableHead,
-  Select,
-  TableBody,
-  MenuItem
+  TableBody
 } from '@mui/material'
 import activeIcon from 'assets/images/activeIcon.png'
 import Image from 'components/Image'
@@ -21,6 +19,11 @@ import SwitchIcon from 'assets/images/switchIcon.png'
 import ActionButton from 'components/Button/ActionButton'
 import { shortenHash } from 'utils'
 import InputNumerical from 'components/Input/InputNumerical'
+import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
+import { Currency } from 'constants/token'
+import Logo from 'assets/images/logo.png'
+import useModal from 'hooks/useModal'
+import SelectCurrencyModal from 'components/Input/CurrencyInputPanel/SelectCurrencyModal'
 
 const ControllBtn = styled(Box)({
   width: '100%',
@@ -218,13 +221,20 @@ const rows: any = [
 
 export default function Bridge() {
   const [amount, setAmount] = useState('')
-  const [curToken, setCurToken] = useState('eth')
+  const [curToken, setCurToken] = useState<Currency>()
   const [active, setActive] = useState(TabState.BRIDGE)
   const [action, setAction] = useState(ActionType.DEPOSIT)
-
+  const [currencyOptions, setCurrencyOptions] = useState<Currency[]>([])
+  const { showModal } = useModal()
   const handleSwitchToken = useCallback(() => {
     console.log('1')
   }, [])
+
+  const onSelectCurrency = useCallback((cur: Currency) => {
+    setCurToken(cur)
+  }, [])
+
+  console.log(setCurrencyOptions)
 
   return (
     <Box
@@ -302,29 +312,32 @@ export default function Bridge() {
                 }}
               >
                 <InputNumerical value={amount} placeholder="0.0" onChange={(e: any) => setAmount(e.target.value)} />
-                <Select
+                <Box
                   sx={{
                     height: 50,
                     border: 'none',
                     borderLeft: '1px solid #3C5141',
                     borderRadius: 0,
                     color: '#A5FFBE',
-                    '& .MuiSvgIcon-root path': {
-                      fill: '#7FB093'
+                    display: 'grid',
+                    padding: '10px',
+                    gridTemplateColumns: '1fr 1fr 1fr',
+                    cursor: 'pointer',
+                    alignItems: 'center',
+                    '& svg': {
+                      margin: '0 auto'
                     }
                   }}
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={curToken}
-                  label=""
-                  onChange={e => {
-                    setCurToken(e.target.value)
+                  onClick={() => {
+                    showModal(
+                      <SelectCurrencyModal onSelectCurrency={onSelectCurrency} currencyOptions={currencyOptions} />
+                    )
                   }}
                 >
-                  <MenuItem value={'eth'}>ETH</MenuItem>
-                  <MenuItem value={'usdc'}>USDC</MenuItem>
-                  <MenuItem value={'usdt'}>USDT</MenuItem>
-                </Select>
+                  <Image width={24} src={curToken?.logo || Logo} />
+                  <Typography>{curToken?.symbol || 'AGLD'}</Typography>
+                  <ArrowIcon />
+                </Box>
               </Box>
             </FromPanel>
             <Box

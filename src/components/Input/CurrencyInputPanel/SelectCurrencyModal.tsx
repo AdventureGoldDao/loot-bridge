@@ -11,7 +11,13 @@ export enum Mode {
   IMPORT = 'import'
 }
 
-export default function SelectCurrencyModal({ onSelectCurrency }: { onSelectCurrency?: (currency: Currency) => void }) {
+export default function SelectCurrencyModal({
+  onSelectCurrency,
+  currencyOptions
+}: {
+  onSelectCurrency?: (currency: Currency) => void
+  currencyOptions: Currency[]
+}) {
   const [input, setInput] = useState('')
   const [mode, SetMode] = useState(Mode.SELECT)
 
@@ -31,16 +37,18 @@ export default function SelectCurrencyModal({ onSelectCurrency }: { onSelectCurr
 
   return (
     <>
-      <Modal closeIcon>
+      <Modal closeIcon background="#1A1E1B">
         <Box width="100%" display="flex" justifyContent="center" padding="24px">
-          <Typography variant="inherit">Select a token</Typography>
+          <Typography variant="inherit" color={'#A5FFBE'}>
+            Select a token
+          </Typography>
         </Box>
         <Box padding="0 32px 23px 32px">
           <Input value={input} onChange={onInput} placeholder="Search by name or paste address" outlined />
         </Box>
         <Divider />
         <Box paddingTop={'24px'}>
-          <CurrencyList mode={mode} currencyOptions={[]} onSelectCurrency={onSelectCurrency} />
+          <CurrencyList mode={mode} currencyOptions={currencyOptions} onSelectCurrency={onSelectCurrency} />
         </Box>
         <Divider />
         <Box height="55px" justifyContent="center" display="flex">
