@@ -130,7 +130,7 @@ export const override: any = {
       root: {
         fontSize: 16,
         fontWeight: 500,
-        fontFamily: 'Roboto, -apple-system, BlinkMacSystemFont, sans-serif!important'
+        fontFamily: 'Inconsolata!important'
       }
     }
   },
@@ -140,7 +140,7 @@ export const override: any = {
     },
     styleOverrides: {
       root: {
-        fontFamily: 'Roboto, -apple-system, BlinkMacSystemFont, sans-serif!important',
+        fontFamily: 'Inconsolata!important',
         color: theme.palette.primary.contrastText,
         borderRadius: theme.shape.borderRadius,
         transition: '.3s',

@@ -1,4 +1,6 @@
+import { useWalletModalToggle } from 'state/application/hooks'
 import Button from './Button'
+import { useActiveWeb3React } from 'hooks'
 
 export default function ActionButton({
   error,
@@ -27,12 +29,20 @@ export default function ActionButton({
   width?: string
   disableAction?: boolean
 }) {
+  const toggleWalletModal = useWalletModalToggle()
+  const { account } = useActiveWeb3React()
   console.log(error, success, pending, errorText, pendingText, successText)
   return (
     <>
-      <Button style={{ height, width }} onClick={onAction} disabled={disableAction}>
-        {children ? children : actionText}
-      </Button>
+      {!account ? (
+        <Button style={{ height, width, fontSize: 20 }} onClick={toggleWalletModal}>
+          Connect Wallet
+        </Button>
+      ) : (
+        <Button style={{ height, width, fontSize: 20 }} onClick={onAction} disabled={disableAction}>
+          {children ? children : actionText}
+        </Button>
+      )}
     </>
   )
 }

@@ -29,14 +29,14 @@ export interface InputProps {
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   [`&.${inputBaseClasses.root}`]: {
     fontSize: 16,
-    color: theme.palette.text.primary,
+    color: '#C0BBB799',
     // fontFamily: 'Roboto',
     fontWeight: 400,
     // backgroundColor: theme.palette.background.default,
     paddingLeft: 20,
     borderRadius: 14
   },
-  [`&.${inputBaseClasses.focused}`]: { border: `1px solid ${theme.palette.primary.main} !important` },
+  [`&.${inputBaseClasses.focused}`]: {},
   [`& .${inputBaseClasses.input}`]: {
     maxWidth: '100%',
     '&::-webkit-outer-spin-button': {
@@ -138,13 +138,10 @@ export default function Input({
         sx={{
           minHeight: height || 50,
           [`&.${inputBaseClasses.root}`]: {
-            backgroundColor: theme => backgroundColor || theme.palette.background.default,
-            border: theme =>
-              `1px solid ${outlined ? 'rgba(255,255,255,.4)' : error ? theme.palette.error.main : 'transparent'}`
+            backgroundColor: backgroundColor || 'transparent'
           },
           [`&.${inputBaseClasses.focused}`]: {
-            borderColor: theme =>
-              error ? `${theme.palette.error.main}!important` : `${theme.palette.primary.main}!important`
+            border: outlined ? 'none' : 'unset'
           },
           [`& .${inputBaseClasses.input}`]: {
             '&::placeholder': {
