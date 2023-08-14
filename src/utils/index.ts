@@ -234,3 +234,9 @@ export function isSocialUrl(name: 'discord' | 'twitter' | 'github' | 'opensea' |
 export function getCurrentTimeStamp(date?: Date | string | number) {
   return Number(((date ? new Date(date) : new Date()).getTime() / 1000).toFixed())
 }
+
+export function formatNumber(num: number | string) {
+  if (String(num).length > 18) return String(num)
+  const numString = String(num)
+  return numString.padStart(18, '0') // 在右边补0，使总长度达到18位
+}

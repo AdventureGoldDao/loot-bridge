@@ -8,6 +8,7 @@ export default function LogoText({
   text,
   fontWeight,
   fontSize,
+  color,
   gapSize,
   size
 }: {
@@ -15,6 +16,7 @@ export default function LogoText({
   text?: string | React.ReactNode
   fontWeight?: number
   fontSize?: number
+  color?: string
   gapSize?: 'small' | 'large'
   size?: string
 }) {
@@ -25,6 +27,7 @@ export default function LogoText({
         alignItems: 'center',
         fontWeight: fontWeight ?? 400,
         fontSize: fontSize ?? 16,
+        color: color ?? 'inherit',
         '& > img, > svg': {
           marginRight: gapSize === 'small' ? '4px' : '12px',
           height: size ? size : '20px',

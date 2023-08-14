@@ -1,38 +1,39 @@
-import {
-  Box,
-  Button as MuiButton,
-  ButtonGroup,
-  Typography,
-  styled,
-  TableRow,
-  TableCell,
-  TableContainer,
-  Paper,
-  Table,
-  TableHead,
-  TableBody
-} from '@mui/material'
-import activeIcon from 'assets/images/activeIcon.png'
+import { Box, Button as MuiButton, ButtonGroup, Typography, styled, Stack, MenuItem } from '@mui/material'
+import activeIcon from 'assets/svg/diamond.svg'
 import Image from 'components/Image'
-import { Fragment, useCallback, useState } from 'react'
-import SwitchIcon from 'assets/images/switchIcon.png'
+import { useCallback, useMemo, useState } from 'react'
+import SwitchIcon from 'assets/svg/switch.svg'
 import ActionButton from 'components/Button/ActionButton'
-import { shortenHash } from 'utils'
-import InputNumerical from 'components/Input/InputNumerical'
 import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
-import { Currency } from 'constants/token'
+// import nft from 'assets/svg/nft-small.svg'
 import Logo from 'assets/images/logo.png'
 import useModal from 'hooks/useModal'
-import SelectCurrencyModal from 'components/Input/CurrencyInputPanel/SelectCurrencyModal'
+import { ChainId, ChainList, ChainListMap } from 'constants/chain'
+import { Chain } from 'models/chain'
+import { useTransferNFTCallback } from 'hooks/useTransferNFT'
+import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
+import TransactiontionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
+import MessageBox from 'components/Modal/TransactionModals/MessageBox'
+import { useActiveWeb3React } from 'hooks'
+import { ApprovalState } from 'hooks/useApproveCallback'
+import { TRANSFER_NFT_ADDRESS } from '../constants'
+import Button from 'components/Button/Button'
+import { useNFTApproveAllCallback } from 'hooks/useNFTApproveAllCallback'
+import { useSwitchNetwork } from 'hooks/useSwitchNetwork'
+import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
+import ComingSoon from './ComingSoon'
+import TxHistory from './components/TxHistory'
+import { useWalletModalToggle } from 'state/application/hooks'
+import LogoText from 'components/LogoText'
+import PopperCard from './components/PopperCard'
+import Collection from './components/Collection'
 
-const ControllBtn = styled(Box)({
+export const ControllBtn = styled(Box)({
   width: '100%',
   display: 'grid',
   alignItems: 'center',
   justifyContent: 'center',
   gridTemplateColumns: '1fr 1px 1fr',
-  fontWeight: 600,
-  fontSize: 18,
   color: '#7FB093',
   textAlign: 'center',
   '& .bridge': {
@@ -41,7 +42,10 @@ const ControllBtn = styled(Box)({
     alignItems: 'center',
     gap: 10,
     justifyContent: 'center',
-    flexDirection: 'row'
+    flexDirection: 'row',
+    '& p': {
+      fontSize: 18
+    }
   },
   '& .account': {
     cursor: 'pointer',
@@ -49,11 +53,14 @@ const ControllBtn = styled(Box)({
     alignItems: 'center',
     gap: 10,
     justifyContent: 'center',
-    flexDirection: 'row'
+    flexDirection: 'row',
+    '& p': {
+      fontSize: 18
+    }
   }
 })
 
-const Panel = styled(Box)({
+export const Panel = styled(Box)({
   marginTop: 26,
   position: 'relative',
   width: '100%',
@@ -61,36 +68,18 @@ const Panel = styled(Box)({
   borderRadius: '10px',
   backgroundColor: '#242926',
   padding: '30px 24px',
-  height: 634
+  height: 590
 })
 
-const FromPanel = styled(Box)({
-  marginTop: 21,
-  height: 145,
-  padding: '17px 25px',
+export const FromPanel = styled(Box)({
+  height: 84,
+  padding: '7px 9px',
   borderRadius: '10px',
-  backgroundColor: '#1A1E1B'
+  margin: '20px 0',
+  backgroundColor: '#2A312D'
 })
 
-const ToPanel = styled(Box)({
-  marginTop: 22,
-  marginBottom: 30,
-  height: 140,
-  borderRadius: '10px',
-  padding: '24px 25px',
-  backgroundColor: '#1A1E1B',
-  '&>div': {
-    display: 'flex',
-    flexDirection: 'row'
-  },
-  '& p': {
-    fontWeight: 600,
-    fontSize: 16,
-    lineHeight: '22px'
-  }
-})
-
-const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
+export const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
   display: 'grid',
   gridTemplateColumns: '1fr 1fr',
   backgroundColor: '#1A1E1B',
@@ -126,372 +115,471 @@ const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
   }
 }))
 
-enum TabState {
+export enum TabState {
   BRIDGE = 'bridge',
-  ACCOUNT = 'account'
+  ACCOUNT = 'Txhistory'
 }
 
-enum ActionType {
-  DEPOSIT = 'deposit',
-  WITHDRAW = 'withdraw'
+export enum ActionType {
+  DEPOSIT = 'Fungible Token',
+  WITHDRAW = 'NFT'
 }
 
-interface Props {
-  timestamp: string
-  txHash: string
-  amount: string
-  status: string
+export interface UserNFTCollection {
+  balance?: string // nft token balance
+  contractAddr?: string
+  contractName?: string
+  description?: string
+  image?: string
+  name?: string
+  tokenId: string
 }
 
-function Row(props: { row: Props }) {
-  const { row } = props
-
-  return (
-    <Fragment>
-      <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-        <TableCell>
-          <Typography>{row.timestamp}</Typography>
-        </TableCell>
-        <TableCell align="center">
-          <Typography>{row.amount} ETH</Typography>
-        </TableCell>
-        <TableCell align="center">
-          <Typography color={'#4BE9FF'} sx={{ textDecoration: 'underline' }}>
-            {shortenHash(row.txHash)}
-          </Typography>
-        </TableCell>
-        <TableCell align="right">
-          <Typography color={'#A5FFBE'}>{row.status}</Typography>
-        </TableCell>
-      </TableRow>
-    </Fragment>
-  )
+const BackedChainId: { [k: number]: number } = {
+  [ChainId.BSCTEST]: 10102,
+  [ChainId.MUMBAI_POLYGON]: 10109
 }
-
-const rows: any = [
-  {
-    timestamp: '2023/05/24 00:00:00',
-    amount: '0.03',
-    txHash: '0xe41f3de68a6d35925a91435f64bd8988afd330260545d5db1b18c839ec7a8501',
-    status: 'Completed'
-  },
-  {
-    timestamp: '2023/05/24 00:00:00',
-    amount: '0.01',
-    txHash: '0xe41f3de68a6d35925a91435f64bd8988afd330260545d5db1b18c839ec7a8501',
-    status: 'Completed'
-  },
-  {
-    timestamp: '2023/05/24 00:00:00',
-    amount: '0.03',
-    txHash: '0xe41f3de68a6d35925a91435f64bd8988afd330260545d5db1b18c839ec7a8501',
-    status: 'Completed'
-  },
-  {
-    timestamp: '2023/05/24 00:00:00',
-    amount: '0.03',
-    txHash: '0xe41f3de68a6d35925a91435f64bd8988afd330260545d5db1b18c839ec7a8501',
-    status: 'Completed'
-  },
-  {
-    timestamp: '2023/05/24 00:00:00',
-    amount: '0.03',
-    txHash: '0xe41f3de68a6d35925a91435f64bd8988afd330260545d5db1b18c839ec7a8501',
-    status: 'Completed'
-  },
-  {
-    timestamp: '2023/05/24 00:00:00',
-    amount: '0.03',
-    txHash: '0xe41f3de68a6d35925a91435f64bd8988afd330260545d5db1b18c839ec7a8501',
-    status: 'Completed'
-  },
-  {
-    timestamp: '2023/05/24 00:00:00',
-    amount: '0.03',
-    txHash: '0xe41f3de68a6d35925a91435f64bd8988afd330260545d5db1b18c839ec7a8501',
-    status: 'Completed'
-  },
-  {
-    timestamp: '2023/05/24 00:00:00',
-    amount: '0.03',
-    txHash: '0xe41f3de68a6d35925a91435f64bd8988afd330260545d5db1b18c839ec7a8501',
-    status: 'Completed'
-  }
-]
 
 export default function Bridge() {
-  const [amount, setAmount] = useState('')
-  const [curToken, setCurToken] = useState<Currency>()
+  const tokenId = 5
+  const { account, chainId } = useActiveWeb3React()
+  // const [srcId] = useState(BackedChainId[ChainId.BSCTEST])
+  const [fromChain, setFromChain] = useState<Chain | null>(ChainListMap[ChainId.BSCTEST] ?? null)
+  const [toChain, setToChain] = useState<Chain | null>(ChainListMap[ChainId.MUMBAI_POLYGON] ?? null)
   const [active, setActive] = useState(TabState.BRIDGE)
   const [action, setAction] = useState(ActionType.DEPOSIT)
-  const [currencyOptions, setCurrencyOptions] = useState<Currency[]>([])
-  const { showModal } = useModal()
-  const handleSwitchToken = useCallback(() => {
-    console.log('1')
-  }, [])
+  const [isEnteredDetail, setIsEnteredDetail] = useState(false)
+  const [isEnteredCollection, setIsEnteredCollection] = useState(false)
+  const dstId = useMemo(() => BackedChainId[toChain?.id as number], [toChain])
+  const [nft, setNft] = useState<UserNFTCollection | undefined>()
+  const transfer = useTransferNFTCallback(dstId, tokenId)
+  const { showModal, hideModal } = useModal()
+  const switchNetwork = useSwitchNetwork()
+  const toggleWalletModal = useWalletModalToggle()
+  const { claimSubmitted: isLoading } = useUserHasSubmittedClaim(`${account}_transfer_nft_${dstId}`)
+  const handleSwitchNetwork = useCallback(() => {
+    setFromChain(toChain)
+    setToChain(fromChain)
+  }, [fromChain, toChain])
 
-  const onSelectCurrency = useCallback((cur: Currency) => {
-    setCurToken(cur)
-  }, [])
+  console.log(isLoading, dstId)
 
-  console.log(setCurrencyOptions)
+  const transferClick = useCallback(() => {
+    if (!account || !dstId) return
+    showModal(<TransacitonPendingModal />)
+    transfer(account, dstId, account, tokenId, account)
+      .then(hash => {
+        hideModal()
+        showModal(<TransactiontionSubmittedModal hash={hash} />)
+      })
+      .catch((err: any) => {
+        hideModal()
+        showModal(
+          <MessageBox type="error">
+            {err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
+          </MessageBox>
+        )
+        console.error(err)
+      })
+  }, [account, dstId, hideModal, showModal, transfer])
+
+  const toChainList = useMemo(() => {
+    return ChainList.filter(chain => !(chain.id === fromChain?.id))
+  }, [fromChain?.id])
+
+  const fromChainList = useMemo(() => {
+    return ChainList.filter(chain => !(chain.id === toChain?.id))
+  }, [toChain?.id])
+
+  const [approveState, approveCallback] = useNFTApproveAllCallback(
+    TRANSFER_NFT_ADDRESS[chainId as ChainId],
+    chainId ? TRANSFER_NFT_ADDRESS[chainId as ChainId] : undefined
+  )
+
+  const ActionButtonNode = useMemo(() => {
+    if (!account) {
+      return (
+        <Button style={{ height: 50, width: '100%', fontSize: 20 }} onClick={toggleWalletModal}>
+          Connect Wallet
+        </Button>
+      )
+    }
+    if (approveState !== ApprovalState.APPROVED) {
+      if (approveState === ApprovalState.PENDING) {
+        return (
+          <Button style={{ height: 50, width: '100%', fontSize: 20 }}>Approving use of {fromChain?.name} NFT...</Button>
+        )
+      }
+      if (approveState === ApprovalState.UNKNOWN) {
+        return <Button style={{ height: 50, width: '100%', fontSize: 20 }}>Loading...</Button>
+      }
+      if (approveState === ApprovalState.NOT_APPROVED) {
+        return (
+          <Button style={{ height: 50, width: '100%', fontSize: 20 }} onClick={approveCallback}>
+            Approve use of {fromChain?.name} NFT
+          </Button>
+        )
+      }
+    }
+    if (chainId !== fromChain?.id)
+      return (
+        <Button
+          style={{ height: 50, width: '100%', fontSize: 20 }}
+          onClick={() => switchNetwork(fromChain?.id || undefined)}
+        >
+          Switch Network
+        </Button>
+      )
+    return <ActionButton width="100%" height="50px" onAction={transferClick} actionText="Transfer" />
+  }, [
+    account,
+    approveCallback,
+    approveState,
+    chainId,
+    fromChain?.id,
+    fromChain?.name,
+    switchNetwork,
+    toggleWalletModal,
+    transferClick
+  ])
 
   return (
-    <Box
-      sx={{
-        maxWidth: 598,
-        width: '100%',
-        margin: '0 auto'
-      }}
-    >
-      <ControllBtn>
-        <Box
-          className="bridge"
-          onClick={() => {
-            setActive(TabState.BRIDGE)
-          }}
-        >
-          {active === TabState.BRIDGE ? <Image width={15.84} src={activeIcon}></Image> : <Image width={15.84} src="" />}
-          <Typography color={active === TabState.BRIDGE ? '#A5FFBE' : '#7FB093'}>Bridge</Typography>
-        </Box>
-        <Box width={1} height={26} sx={{ backgroundColor: '#3C5141' }}></Box>
-        <Box
-          className="account"
-          onClick={() => {
-            setActive(TabState.ACCOUNT)
-          }}
-        >
-          {active === TabState.ACCOUNT ? (
-            <Image width={15.84} src={activeIcon}></Image>
-          ) : (
-            <Image width={15.84} src="" />
-          )}
-          <Typography color={active === TabState.ACCOUNT ? '#A5FFBE' : '#7FB093'}>Account</Typography>
-        </Box>
-      </ControllBtn>
-      <Panel>
-        <StyledButtonGroup>
-          <MuiButton
-            className={action === ActionType.DEPOSIT ? 'active' : ''}
-            onClick={() => setAction(ActionType.DEPOSIT)}
-          >
-            Deposit
-          </MuiButton>
-          <MuiButton
-            className={action === ActionType.WITHDRAW ? 'active' : ''}
-            onClick={() => setAction(ActionType.WITHDRAW)}
-          >
-            Withdraw
-          </MuiButton>
-        </StyledButtonGroup>
-        {active === TabState.BRIDGE ? (
-          <>
-            <FromPanel>
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  gap: 10
-                }}
-              >
-                <Typography color={'#7FB093'}>From</Typography>
-                <Typography color={'#A5FFBE'} ml={17}>
-                  Goerli Ethereum
-                </Typography>
-              </Box>
-              <Box
-                mt={13}
-                sx={{
-                  display: 'grid',
-                  gridTemplateColumns: '3fr 1fr',
-                  border: '1px solid #3C5141',
-                  borderRadius: '6px',
-                  backgroundColor: '#151815',
-                  '& ': {}
-                }}
-              >
-                <InputNumerical value={amount} placeholder="0.0" onChange={(e: any) => setAmount(e.target.value)} />
-                <Box
-                  sx={{
-                    height: 50,
-                    border: 'none',
-                    borderLeft: '1px solid #3C5141',
-                    borderRadius: 0,
-                    color: '#A5FFBE',
-                    display: 'grid',
-                    padding: '10px',
-                    gridTemplateColumns: '1fr 1fr 1fr',
-                    cursor: 'pointer',
-                    alignItems: 'center',
-                    '& svg': {
-                      margin: '0 auto'
-                    }
-                  }}
-                  onClick={() => {
-                    showModal(
-                      <SelectCurrencyModal onSelectCurrency={onSelectCurrency} currencyOptions={currencyOptions} />
-                    )
-                  }}
-                >
-                  <Image width={24} src={curToken?.logo || Logo} />
-                  <Typography>{curToken?.symbol || 'AGLD'}</Typography>
-                  <ArrowIcon />
-                </Box>
-              </Box>
-            </FromPanel>
-            <Box
-              width={'fit-content'}
-              position={'absolute'}
-              sx={{
-                cursor: 'pointer',
-                top: '43%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)'
-              }}
-              onClick={handleSwitchToken}
-            >
-              <Image width={50} src={SwitchIcon}></Image>
-            </Box>
-            <ToPanel>
-              <Box>
-                <Typography color={'#7FB093'}>To</Typography>
-                <Typography color={'#A5FFBE'} ml={33}>
-                  Loot Caldera Chain
-                </Typography>
-              </Box>
-              <Box mt={24}>
-                <Typography color={'#7FB093'}>You will receive:</Typography>
-                <Typography color={'#A5FFBE'} ml={10}>
-                  0 AGLD
-                </Typography>
-              </Box>
-              <Box mt={6}>
-                <Typography color={'#7FB093'}>Current balance on L2:</Typography>
-                <Typography color={'#A5FFBE'} ml={10}>
-                  0.0 AGLD
-                </Typography>
-              </Box>
-            </ToPanel>
-            <ActionButton width="100%" height="50px" onAction={() => {}} />
-            <Box
-              mt={30}
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                flexDirection: 'column',
-                padding: '13px 19px',
-                gap: 12,
-                border: '1px solid #3C5141',
-                borderRadius: '8px',
-                backgroundColor: '#1A1E1B'
-              }}
-            >
-              <Typography color={'#A5FFBE'} fontSize={18}>
-                Add Chain To Metamask
-              </Typography>
-              <Typography color={'#7FB093'} fontSize={12}>
-                Note: You Need To Add The Chain To Metamask Before Bridging From The Chain.
-              </Typography>
-            </Box>
-          </>
-        ) : (
-          <TableContainer
-            component={Paper}
-            sx={{
-              maxWidth: 598,
-              width: '100%',
-              height: '87%',
-              backgroundColor: 'transparent',
-              borderRadius: '4px',
-              overflow: 'auto',
-              marginTop: 22,
-              boxShadow: 'none',
-              '&::-webkit-scrollbar': {
-                display: 'none!important',
-                width: 0
-              },
-              '& .MuiTable-root': {
-                backgroundColor: '#1A1E1B',
-                borderRadius: '10px',
-                paddingBottom: 20
-              },
-              '& .MuiTableHead-root': {
-                color: '#7FB093',
-                fontSize: 16,
-                lineHeight: '22px'
-              },
-              '& .MuiTableHead-root tr': {
-                height: 55
-              },
-              '& .MuiTableRow-root': {
-                width: '100%',
-                height: 84,
-                fontWeight: 400,
-                fontSize: 14,
-                cursor: 'pointer',
-                borderRadius: '4px',
-                '& th': {
-                  width: '25%',
-                  borderBottom: '1px solid #3C5141',
-                  backgroundColor: '#1A1E1B'
-                }
-              },
-              '& .MuiTableRow-root:nth-of-type(2n)': {
-                backgroundColor: '#151815'
-              },
-              '& .MuiTableBody-root': {
-                position: 'relative',
-                '& tr:nth-of-type(2n - 1)': {},
-                '& tr:nth-of-type(2n)': {}
-              },
-              '& .MuiTableCell-root': {
-                color: '#7FB093',
-                border: 'none',
-                borderImage: 'none'
-              }
+    <>
+      <Box
+        sx={{
+          maxWidth: 598,
+          width: '100%',
+          margin: '0 auto'
+        }}
+      >
+        <ControllBtn>
+          <Box
+            className="bridge"
+            onClick={() => {
+              setActive(TabState.BRIDGE)
+              setIsEnteredDetail(false)
+              setIsEnteredCollection(false)
             }}
           >
-            <Table stickyHeader aria-label="sticky table">
-              <TableHead>
-                <TableRow>
-                  <TableCell width={'25%'} align="left">
-                    Time
-                  </TableCell>
-                  <TableCell width={'25%'} align="center">
-                    Amount
-                  </TableCell>
-                  <TableCell width={'25%'} align="center">
-                    Transaction
-                  </TableCell>
-                  <TableCell width={'25%'} align="center">
-                    Status
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rows && rows.map((row: any) => <Row key={row.txHash} row={row} />)}
-                {rows.length === 0 ? (
-                  <Box
-                    sx={{
-                      width: '100%',
-                      position: 'absolute',
-                      color: '#7FB093',
-                      fontWeight: 600,
-                      fontSize: 18
-                    }}
-                  >
-                    No Data
-                  </Box>
+            {active === TabState.BRIDGE ? (
+              <Image width={15.84} src={activeIcon}></Image>
+            ) : (
+              <Image width={15.84} src="" />
+            )}
+            <Typography
+              fontWeight={active === TabState.BRIDGE ? 700 : 600}
+              color={active === TabState.BRIDGE ? '#A5FFBE' : '#7FB093'}
+            >
+              Bridge
+            </Typography>
+          </Box>
+          <Box width={1} height={26} sx={{ backgroundColor: '#3C5141' }}></Box>
+          <Box
+            className="account"
+            onClick={() => {
+              setActive(TabState.ACCOUNT)
+              setIsEnteredDetail(false)
+              setIsEnteredCollection(false)
+            }}
+          >
+            {active === TabState.ACCOUNT ? <Image width={15.84} src={activeIcon} /> : <Image width={15.84} src="" />}
+            <Typography
+              fontWeight={active === TabState.ACCOUNT ? 700 : 600}
+              color={active === TabState.ACCOUNT ? '#A5FFBE' : '#7FB093'}
+            >
+              History
+            </Typography>
+          </Box>
+        </ControllBtn>
+        {active === TabState.BRIDGE && (
+          <Panel>
+            {!isEnteredDetail && !isEnteredCollection && (
+              <StyledButtonGroup>
+                <MuiButton
+                  className={action === ActionType.DEPOSIT ? 'active' : ''}
+                  onClick={() => setAction(ActionType.DEPOSIT)}
+                >
+                  Fungible Token
+                </MuiButton>
+                <MuiButton
+                  className={action === ActionType.WITHDRAW ? 'active' : ''}
+                  onClick={() => setAction(ActionType.WITHDRAW)}
+                >
+                  NFT
+                </MuiButton>
+              </StyledButtonGroup>
+            )}
+            {action === ActionType.WITHDRAW ? (
+              <>
+                {isEnteredCollection === true ? (
+                  <Collection setNft={setNft} fromChain={fromChain} setIsEnteredCollection={setIsEnteredCollection} />
                 ) : (
-                  ''
+                  <>
+                    <FromPanel>
+                      <Box
+                        sx={{
+                          border: '1px solid #3C5141',
+                          borderRadius: '10px',
+                          backgroundColor: '#151815'
+                        }}
+                      >
+                        <PopperCard
+                          sx={{
+                            width: 530,
+                            marginTop: 13,
+                            maxHeight: '50vh',
+                            overflowY: 'auto',
+                            backgroundColor: '#2C353D',
+                            border: '1px solid #FDFFAC',
+                            '&::-webkit-scrollbar': {
+                              display: 'none'
+                            }
+                          }}
+                          placement="bottom-start"
+                          targetElement={
+                            <Box
+                              sx={{
+                                height: 70,
+                                color: '#A5FFBE',
+                                display: 'flex',
+                                padding: '10px',
+                                cursor: 'pointer',
+                                alignItems: 'center',
+                                '& svg': {
+                                  margin: '0 40px 0 auto'
+                                },
+                                '& p': {
+                                  color: '#ebebeb',
+                                  fontSize: 20
+                                }
+                              }}
+                            >
+                              <Stack direction={'row'} spacing={19} alignItems={'center'}>
+                                <Image width={40} src={fromChain?.logo || Logo} />
+                                <Typography>{fromChain?.symbol || 'AGLD'}</Typography>
+                              </Stack>
+                              <ArrowIcon />
+                            </Box>
+                          }
+                        >
+                          <>
+                            {fromChainList.map(option => (
+                              <MenuItem
+                                onClick={() => {
+                                  switchNetwork(option.id)
+                                  setFromChain(ChainListMap[option.id] ?? null)
+                                }}
+                                value={option.id}
+                                key={option.id}
+                                selected={chainId === option.id}
+                              >
+                                <LogoText
+                                  logo={option.logo}
+                                  text={option.name}
+                                  gapSize={'large'}
+                                  fontSize={16}
+                                  fontWeight={600}
+                                  color="#A5FFBE"
+                                />
+                              </MenuItem>
+                            ))}
+                          </>
+                        </PopperCard>
+                      </Box>
+                    </FromPanel>
+                    <Box
+                      width={'fit-content'}
+                      position={'absolute'}
+                      sx={{
+                        cursor: 'pointer',
+                        top: '35%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)'
+                      }}
+                      onClick={handleSwitchNetwork}
+                    >
+                      <Image width={50} src={SwitchIcon} />
+                    </Box>
+                    <FromPanel>
+                      <Box
+                        sx={{
+                          border: '1px solid #3C5141',
+                          borderRadius: '10px',
+                          backgroundColor: '#151815'
+                        }}
+                      >
+                        <PopperCard
+                          sx={{
+                            width: 530,
+                            marginTop: 13,
+                            maxHeight: '50vh',
+                            overflowY: 'auto',
+                            backgroundColor: '#2C353D',
+                            border: '1px solid #FDFFAC',
+                            '&::-webkit-scrollbar': {
+                              display: 'none'
+                            }
+                          }}
+                          placement="bottom-start"
+                          targetElement={
+                            <Box
+                              sx={{
+                                height: 70,
+                                color: '#A5FFBE',
+                                display: 'flex',
+                                padding: '10px',
+                                cursor: 'pointer',
+                                alignItems: 'center',
+                                '& svg': {
+                                  margin: '0 40px 0 auto'
+                                },
+                                '& p': {
+                                  color: '#ebebeb',
+                                  fontSize: 20
+                                }
+                              }}
+                            >
+                              <Stack direction={'row'} spacing={19} alignItems={'center'}>
+                                <Image width={40} src={toChain?.logo || Logo} />
+                                <Typography>{toChain?.symbol || 'AGLD'}</Typography>
+                              </Stack>
+                              <ArrowIcon />
+                            </Box>
+                          }
+                        >
+                          <>
+                            {toChainList.map(option => (
+                              <MenuItem
+                                onClick={() => {
+                                  setToChain(ChainListMap[option.id] ?? null)
+                                }}
+                                value={option.id}
+                                key={option.id}
+                                selected={chainId === option.id}
+                              >
+                                <LogoText
+                                  logo={option.logo}
+                                  text={option.name}
+                                  gapSize={'large'}
+                                  fontSize={16}
+                                  fontWeight={600}
+                                  color="#A5FFBE"
+                                />
+                              </MenuItem>
+                            ))}
+                          </>
+                        </PopperCard>
+                      </Box>
+                    </FromPanel>
+                    {!nft ? (
+                      <Stack
+                        direction={'row'}
+                        sx={{
+                          border: '1px solid #4B5954',
+                          backgroundColor: '#111211',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          height: 96,
+                          padding: '10px 9px',
+                          borderRadius: '12px',
+                          cursor: 'pointer',
+                          margin: '20px 0',
+                          color: '#A5FFBE',
+                          fontWeight: 600
+                        }}
+                        onClick={() => {
+                          setIsEnteredCollection(true)
+                        }}
+                      >
+                        + Select NFT
+                      </Stack>
+                    ) : (
+                      <Stack
+                        direction={'row'}
+                        sx={{
+                          border: '1px solid #4B5954',
+                          backgroundColor: '#111211',
+                          height: 96,
+                          padding: '10px 9px',
+                          borderRadius: '12px',
+                          margin: '20px 0'
+                        }}
+                      >
+                        <Image width={76} style={{ borderRadius: '7px' }} src={nft?.image || ''} />
+                        <Box ml={34}>
+                          <Typography color={'#7A9283'} fontSize={18} fontWeight={500}>
+                            {nft.name}
+                          </Typography>
+                          <Typography color={'#ebebeb'} fontSize={24} fontWeight={600} mt={8}>
+                            #{nft.tokenId}
+                          </Typography>
+                        </Box>
+                      </Stack>
+                    )}
+
+                    <Stack
+                      mb={20}
+                      direction={'row'}
+                      justifyContent={'space-between'}
+                      alignItems={'center'}
+                      sx={{
+                        height: 54,
+                        backgroundColor: '#000',
+                        borderRadius: '12px',
+                        padding: '16px 25px',
+                        '& p': {
+                          fontWeight: 600,
+                          color: '#7A9283',
+                          lineHeight: '22px',
+                          fontSize: 16,
+                          '& span': {
+                            color: '#A5FFBE'
+                          }
+                        }
+                      }}
+                    >
+                      <Typography>
+                        Fees: <span>0</span>
+                      </Typography>
+                      <Typography>
+                        Estimated Time: <span>3 mins</span>
+                      </Typography>
+                    </Stack>
+                    {ActionButtonNode}
+                  </>
                 )}
-              </TableBody>
-            </Table>
-          </TableContainer>
+              </>
+            ) : (
+              <ComingSoon />
+            )}
+          </Panel>
         )}
-      </Panel>
-    </Box>
+        {active === TabState.ACCOUNT && (
+          <Panel>
+            {!isEnteredDetail && (
+              <StyledButtonGroup>
+                <MuiButton
+                  className={action === ActionType.DEPOSIT ? 'active' : ''}
+                  onClick={() => setAction(ActionType.DEPOSIT)}
+                >
+                  Fungible Token
+                </MuiButton>
+                <MuiButton
+                  className={action === ActionType.WITHDRAW ? 'active' : ''}
+                  onClick={() => setAction(ActionType.WITHDRAW)}
+                >
+                  NFT
+                </MuiButton>
+              </StyledButtonGroup>
+            )}
+            {action === ActionType.WITHDRAW ? (
+              <TxHistory isEnteredDetail={isEnteredDetail} setIsEnteredDetail={setIsEnteredDetail} />
+            ) : (
+              <ComingSoon />
+            )}
+          </Panel>
+        )}
+      </Box>
+    </>
   )
 }

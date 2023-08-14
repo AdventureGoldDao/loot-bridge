@@ -1,6 +1,7 @@
 import BigNumberjs from 'bignumber.js'
 import EthUrl from 'assets/svg/eth_logo.svg'
 import BSCUrl from 'assets/svg/binance.svg'
+import LootUrl from 'assets/images/logo.png'
 import ZkevmSrc from 'assets/images/zkevm_logo.png'
 
 export function numberToHex(number: number) {
@@ -34,7 +35,9 @@ export enum ChainId {
   ARBITRUM = 42161,
   CELO = 42220,
   AVALANCHE = 43114,
+  MUMBAI_POLYGON = 80001,
   SEPOLIA = 11155111,
+  LOOT = 9088912,
   AUROEA = 1313161554,
   HARMONY = 1666600000,
   PALM = 11297108109
@@ -151,7 +154,7 @@ export const SUPPORTED_NETWORKS: {
       decimals: 18,
       logo: BSCUrl
     },
-    rpcUrls: ['https://data-seed-prebsc-1-s1.binance.org:8545/'],
+    rpcUrls: ['https://bsc-testnet.publicnode.com'],
     blockExplorerUrls: ['https://testnet.bscscan.com/']
   },
   [ChainId.GNOSIS]: {
@@ -362,6 +365,19 @@ export const SUPPORTED_NETWORKS: {
     rpcUrls: ['https://rpc.ankr.com/avalanche'],
     blockExplorerUrls: ['https://snowtrace.io/']
   },
+  [ChainId.MUMBAI_POLYGON]: {
+    id: ChainId.MUMBAI_POLYGON,
+    hexChainId: numberToHex(ChainId.MUMBAI_POLYGON),
+    chainName: 'Polygon Mumbai',
+    nativeCurrency: {
+      name: 'MATIC',
+      symbol: 'MATIC',
+      decimals: 18,
+      logo: 'https://polygonscan.com/images/svg/brands/poly.png'
+    },
+    rpcUrls: ['https://polygon-mumbai-bor.publicnode.com'],
+    blockExplorerUrls: ['https://mumbai.polygonscan.com/']
+  },
   [ChainId.SEPOLIA]: {
     id: ChainId.SEPOLIA,
     hexChainId: numberToHex(ChainId.SEPOLIA),
@@ -374,6 +390,19 @@ export const SUPPORTED_NETWORKS: {
     },
     rpcUrls: ['https://sepolia.infura.io/v3/'],
     blockExplorerUrls: ['https://sepolia.etherscan.io/']
+  },
+  [ChainId.LOOT]: {
+    id: ChainId.LOOT,
+    hexChainId: numberToHex(ChainId.LOOT),
+    chainName: 'Loot Chain',
+    nativeCurrency: {
+      name: 'AGLD',
+      symbol: 'AGLD',
+      decimals: 18,
+      logo: LootUrl
+    },
+    rpcUrls: ['https://rpc.lootchain.com/http'],
+    blockExplorerUrls: ['https://explorer.lootchain.com/']
   },
   [ChainId.AUROEA]: {
     id: ChainId.AUROEA,
