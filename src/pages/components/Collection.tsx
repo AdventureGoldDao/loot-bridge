@@ -1,21 +1,46 @@
 import { Box, Stack, Typography } from '@mui/material'
-import Logo from 'assets/svg/search.svg'
 import PopperCard from './PopperCard'
 import Image from 'components/Image'
 import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
 import { Chain } from 'models/chain'
 import { UserNFTCollection } from 'pages/Bridge'
+import { useState } from 'react'
+import Logo from 'assets/svg/nft-small.svg'
+
+const tokenNFTList = [
+  {
+    tokenAddress: '0x1EFB2Cb5015FDd13120dF72BB152c8Ec91bCD68e',
+    name: 'ONFT721'
+  }
+]
+
+const userNFTList: UserNFTCollection[] = [
+  {
+    name: 'ONFT721',
+    contractAddr: '0x1EFB2Cb5015FDd13120dF72BB152c8Ec91bCD68e',
+    image: Logo,
+    tokenId: 5,
+    balance: ''
+  },
+  {
+    name: 'ONFT721',
+    contractAddr: '0x1EFB2Cb5015FDd13120dF72BB152c8Ec91bCD68e',
+    image: Logo,
+    tokenId: 4,
+    balance: ''
+  }
+]
 
 export default function Collection({
-  setNft,
+  setSelectedNft,
   fromChain,
   setIsEnteredCollection
 }: {
-  setNft: React.Dispatch<React.SetStateAction<UserNFTCollection | undefined>>
+  setSelectedNft: React.Dispatch<React.SetStateAction<UserNFTCollection | undefined>>
   fromChain: Chain | null
   setIsEnteredCollection: React.Dispatch<React.SetStateAction<boolean>>
 }) {
-  console.log(fromChain, setNft)
+  const [collection, setCollection] = useState<any>()
 
   return (
     <Stack>
@@ -30,7 +55,7 @@ export default function Collection({
       </Typography>
       <PopperCard
         sx={{
-          width: 530,
+          width: 549,
           marginTop: 13,
           maxHeight: '50vh',
           overflowY: 'auto',
@@ -66,25 +91,86 @@ export default function Collection({
             }}
           >
             <Stack direction={'row'} spacing={19} alignItems={'center'}>
-              <Typography>Select a Collection</Typography>
+              <Typography>{collection ? collection.name : 'Select a Collection'}</Typography>
             </Stack>
             <ArrowIcon />
           </Box>
         }
       >
-        <></>
+        <>
+          {tokenNFTList.map(option => (
+            <Box
+              key={option.tokenAddress}
+              sx={{
+                color: '#7fb093',
+                fontSize: 16,
+                lineHeight: '24px',
+                padding: '14px 20px',
+                '&:hover': {
+                  cursor: 'pointer',
+                  opacity: 0.8,
+                  backgroundColor: '#282D29'
+                }
+              }}
+              onClick={() => setCollection(option)}
+            >
+              {option.name}
+            </Box>
+          ))}
+        </>
       </PopperCard>
       <Stack
         mt={15}
-        justifyContent={'center'}
-        alignItems={'center'}
+        justifyContent={'flex-start'}
+        direction={'column'}
+        spacing={12}
         sx={{
           height: 438,
+          padding: 16,
           backgroundColor: '#000',
-          borderRadius: '12px'
+          borderRadius: '12px',
+          overflowY: 'auto'
         }}
       >
-        <Image src={Logo} width={56} />
+        {userNFTList.map(option => (
+          <>
+            <Stack
+              height={70}
+              key={option.tokenId}
+              direction={'row'}
+              justifyContent={'space-between'}
+              alignItems={'center'}
+              sx={{
+                width: '100%',
+                padding: '14px 20px',
+                backgroundColor: '#101110',
+                borderRadius: '10px',
+                '&:hover': {
+                  cursor: 'pointer',
+                  backgroundColor: '#282D29'
+                },
+                '& div': {
+                  flexDirection: 'row',
+                  alignItems: 'center'
+                }
+              }}
+              onClick={() => {
+                setSelectedNft(option)
+                setIsEnteredCollection(false)
+              }}
+            >
+              <Stack>
+                <Image src={option.image || ''} width={44} style={{ borderRadius: '50%' }} />
+                <Typography ml={10} color={'#A5FFBE'} fontSize={20} fontWeight={600}>
+                  {option.name}
+                </Typography>
+              </Stack>
+              <Typography fontSize={16} fontWeight={600} color={'#A5FFBE'}>
+                {fromChain?.name}
+              </Typography>
+            </Stack>
+          </>
+        ))}
       </Stack>
     </Stack>
   )

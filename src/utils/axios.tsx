@@ -1,7 +1,8 @@
 import axios, { AxiosResponse, AxiosPromise } from 'axios'
+import { serverBaseUrl } from '../constants'
 
 const axiosInstance = axios.create({
-  baseURL: '',
+  baseURL: serverBaseUrl,
   timeout: 10000,
   headers: { 'content-type': 'application/json', accept: 'application/json' }
 })

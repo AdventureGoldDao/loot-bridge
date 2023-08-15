@@ -5,7 +5,6 @@ import { useCallback, useMemo, useState } from 'react'
 import SwitchIcon from 'assets/svg/switch.svg'
 import ActionButton from 'components/Button/ActionButton'
 import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
-// import nft from 'assets/svg/nft-small.svg'
 import Logo from 'assets/images/logo.png'
 import useModal from 'hooks/useModal'
 import { ChainId, ChainList, ChainListMap } from 'constants/chain'
@@ -132,7 +131,7 @@ export interface UserNFTCollection {
   description?: string
   image?: string
   name?: string
-  tokenId: string
+  tokenId: number
 }
 
 const BackedChainId: { [k: number]: number } = {
@@ -141,9 +140,9 @@ const BackedChainId: { [k: number]: number } = {
 }
 
 export default function Bridge() {
-  const tokenId = 5
+  // const tokenId = 5
   const { account, chainId } = useActiveWeb3React()
-  // const [srcId] = useState(BackedChainId[ChainId.BSCTEST])
+  const [selectedNft, setSelectedNft] = useState<UserNFTCollection>()
   const [fromChain, setFromChain] = useState<Chain | null>(ChainListMap[ChainId.BSCTEST] ?? null)
   const [toChain, setToChain] = useState<Chain | null>(ChainListMap[ChainId.MUMBAI_POLYGON] ?? null)
   const [active, setActive] = useState(TabState.BRIDGE)
@@ -151,8 +150,7 @@ export default function Bridge() {
   const [isEnteredDetail, setIsEnteredDetail] = useState(false)
   const [isEnteredCollection, setIsEnteredCollection] = useState(false)
   const dstId = useMemo(() => BackedChainId[toChain?.id as number], [toChain])
-  const [nft, setNft] = useState<UserNFTCollection | undefined>()
-  const transfer = useTransferNFTCallback(dstId, tokenId)
+  const transfer = useTransferNFTCallback(dstId, selectedNft !== undefined ? selectedNft.tokenId : 0)
   const { showModal, hideModal } = useModal()
   const switchNetwork = useSwitchNetwork()
   const toggleWalletModal = useWalletModalToggle()
@@ -165,9 +163,9 @@ export default function Bridge() {
   console.log(isLoading, dstId)
 
   const transferClick = useCallback(() => {
-    if (!account || !dstId) return
+    if (!account || !dstId || !selectedNft) return
     showModal(<TransacitonPendingModal />)
-    transfer(account, dstId, account, tokenId, account)
+    transfer(account, dstId, account, selectedNft.tokenId, account)
       .then(hash => {
         hideModal()
         showModal(<TransactiontionSubmittedModal hash={hash} />)
@@ -181,7 +179,7 @@ export default function Bridge() {
         )
         console.error(err)
       })
-  }, [account, dstId, hideModal, showModal, transfer])
+  }, [account, dstId, hideModal, selectedNft, showModal, transfer])
 
   const toChainList = useMemo(() => {
     return ChainList.filter(chain => !(chain.id === fromChain?.id))
@@ -312,7 +310,11 @@ export default function Bridge() {
             {action === ActionType.WITHDRAW ? (
               <>
                 {isEnteredCollection === true ? (
-                  <Collection setNft={setNft} fromChain={fromChain} setIsEnteredCollection={setIsEnteredCollection} />
+                  <Collection
+                    setSelectedNft={setSelectedNft}
+                    fromChain={fromChain}
+                    setIsEnteredCollection={setIsEnteredCollection}
+                  />
                 ) : (
                   <>
                     <FromPanel>
@@ -471,7 +473,7 @@ export default function Bridge() {
                         </PopperCard>
                       </Box>
                     </FromPanel>
-                    {!nft ? (
+                    {!selectedNft ? (
                       <Stack
                         direction={'row'}
                         sx={{
@@ -505,13 +507,13 @@ export default function Bridge() {
                           margin: '20px 0'
                         }}
                       >
-                        <Image width={76} style={{ borderRadius: '7px' }} src={nft?.image || ''} />
+                        <Image width={76} style={{ borderRadius: '7px' }} src={selectedNft?.image || ''} />
                         <Box ml={34}>
                           <Typography color={'#7A9283'} fontSize={18} fontWeight={500}>
-                            {nft.name}
+                            {selectedNft.name}
                           </Typography>
                           <Typography color={'#ebebeb'} fontSize={24} fontWeight={600} mt={8}>
-                            #{nft.tokenId}
+                            #{selectedNft.tokenId}
                           </Typography>
                         </Box>
                       </Stack>

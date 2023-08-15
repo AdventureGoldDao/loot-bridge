@@ -8,3 +8,13 @@ export function commitErrorMsg(title: string, content: string, func: string, par
     params
   })
 }
+
+export function getUserNFTsByScan(account: string, chainId: number, index: number, size: number) {
+  return Axios.get('stpdao/v3/user/nftscan', {
+    chainId,
+    cursor: (index - 1) * size + 1,
+    limit: size,
+    account,
+    ercType: 'erc721'
+  })
+}

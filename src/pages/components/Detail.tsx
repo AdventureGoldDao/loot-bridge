@@ -90,7 +90,7 @@ export default function Detail({
               </Typography>
             </Box>
           </Stack>
-          <Image src={Arrow} width={50} style={{ position: 'absolute', left: '50%' }} />
+          <Image src={Arrow} width={50} style={{ position: 'absolute', left: '45.5%', top: '33%' }} />
         </Stack>
       </Box>
     </Box>
