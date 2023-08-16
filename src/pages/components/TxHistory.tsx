@@ -1,6 +1,8 @@
 import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
 import { Fragment, useCallback, useState } from 'react'
 import Detail from './Detail'
+import EthLogo from 'assets/svg/eth_logo.svg'
+import LootLogo from 'assets/images/logo.png'
 
 interface Props {
   timestamp: string
@@ -40,6 +42,8 @@ export const rows: any = [
     timestamp: '2023/05/24 00:00:00',
     from: 'Ethereum',
     to: 'Loot',
+    fromLogo: EthLogo,
+    toLogo: LootLogo,
     txHash: '0xe41f3de68a6d35925a91435f64bd8988afd330260545d5db1b18c839ec7a8501',
     name: 'Completed',
     tokenId: 0
@@ -48,6 +52,8 @@ export const rows: any = [
     timestamp: '2023/05/24 00:00:00',
     from: 'Ethereum',
     to: 'Loot',
+    fromLogo: EthLogo,
+    toLogo: LootLogo,
     txHash: '0xe41f3de68a6d35925a91435f64bd8988afd330260545d5db1b18c839ec7a8501',
     name: 'Completed',
     tokenId: 1
@@ -56,6 +62,8 @@ export const rows: any = [
     timestamp: '2023/05/24 00:00:00',
     from: 'Ethereum',
     to: 'Loot',
+    fromLogo: EthLogo,
+    toLogo: LootLogo,
     txHash: '0xe41f3de68a6d35925a91435f64bd8988afd330260545d5db1b18c839ec7a8501',
     name: 'Completed',
     tokenId: 2
@@ -64,6 +72,8 @@ export const rows: any = [
     timestamp: '2023/05/24 00:00:00',
     from: 'Ethereum',
     to: 'Loot',
+    fromLogo: EthLogo,
+    toLogo: LootLogo,
     txHash: '0xe41f3de68a6d35925a91435f64bd8988afd330260545d5db1b18c839ec7a8501',
     name: 'Completed',
     tokenId: 3
@@ -72,6 +82,8 @@ export const rows: any = [
     timestamp: '2023/05/24 00:00:00',
     from: 'Ethereum',
     to: 'Loot',
+    fromLogo: EthLogo,
+    toLogo: LootLogo,
     txHash: '0xe41f3de68a6d35925a91435f64bd8988afd330260545d5db1b18c839ec7a8501',
     name: 'Completed',
     tokenId: 4
@@ -80,6 +92,8 @@ export const rows: any = [
     timestamp: '2023/05/24 00:00:00',
     from: 'Ethereum',
     to: 'Loot',
+    fromLogo: EthLogo,
+    toLogo: LootLogo,
     txHash: '0xe41f3de68a6d35925a91435f64bd8988afd330260545d5db1b18c839ec7a8501',
     name: 'Completed',
     tokenId: 5
@@ -88,6 +102,8 @@ export const rows: any = [
     timestamp: '2023/05/24 00:00:00',
     from: 'Ethereum',
     to: 'Loot',
+    fromLogo: EthLogo,
+    toLogo: LootLogo,
     txHash: '0xe41f3de68a6d35925a91435f64bd8988afd330260545d5db1b18c839ec7a8501',
     name: 'Completed',
     tokenId: 6
@@ -96,6 +112,8 @@ export const rows: any = [
     timestamp: '2023/05/24 00:00:00',
     from: 'Ethereum',
     to: 'Loot',
+    fromLogo: EthLogo,
+    toLogo: LootLogo,
     txHash: '0xe41f3de68a6d35925a91435f64bd8988afd330260545d5db1b18c839ec7a8501',
     name: 'Completed',
     tokenId: 7

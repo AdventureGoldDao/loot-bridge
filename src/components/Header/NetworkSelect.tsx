@@ -22,12 +22,16 @@ export default function NetworkSelect() {
         width="max-content"
         height={isDownSm ? '24px' : '36px'}
         style={{
-          background: 'transparent',
+          background: 'rgba(165, 255, 190, 0.1)',
           border: '1px solid rgba(0, 0, 0, 0.1)',
+          color: '#fff',
           '& .Mui-disabled.MuiSelect-select.MuiInputBase-input': {
             paddingRight: isDownSm ? 0 : 10,
             color: theme => theme.palette.text.primary,
             WebkitTextFillColor: theme => theme.palette.text.primary
+          },
+          '& .MuiSelect-icon path': {
+            fill: 'rgb(165, 255, 190)'
           }
         }}
       >

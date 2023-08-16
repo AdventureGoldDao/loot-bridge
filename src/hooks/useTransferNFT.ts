@@ -1,12 +1,13 @@
 import { TransactionResponse } from '@ethersproject/providers'
-import { useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useActiveWeb3React } from '.'
 import { useTransferNFTContract } from './useContract'
 import { useGasPriceInfo } from './useGasPrice'
-import { commitErrorMsg } from 'utils/fetch/server'
+import { commitErrorMsg, getUserNFT721List, getUserTransferNFTHistoryList } from 'utils/fetch/server'
 import { useSingleCallResult } from 'state/multicall/hooks'
 import { formatNumber } from 'utils'
+import { useRequest } from 'ahooks'
 
 export function useTransferNFTCallback(dstChainId: number, tokenId: number) {
   const addTransaction = useTransactionAdder()
@@ -50,7 +51,6 @@ export function useTransferNFTCallback(dstChainId: number, tokenId: number) {
         args,
         formatNumber(tFee?.nativeFee.toString())
       )
-      console.log('🚀 ~ file: useTransferNFT.ts:48 ~ gasLimit:', gasLimit, gasPrice)
 
       return contract[method](...args, {
         gasPrice,
@@ -79,5 +79,73 @@ export function useTransferNFTCallback(dstChainId: number, tokenId: number) {
         })
     },
     [account, contract, tFee, gasPriceInfoCallback, addTransaction]
+  )
+}
+
+export function useUserNFTList(tokenAddress: string) {
+  const [currentPage, setCurrentPage] = useState(1)
+  const [loading, setLoading] = useState<boolean>(false)
+  const [total, setTotal] = useState<number>(0)
+  const pageSize = 100
+  const [result, setResult] = useState<any>([])
+
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [tokenAddress])
+
+  useEffect(() => {
+    ;(async () => {
+      if (!tokenAddress) {
+        setResult([])
+        setTotal(0)
+        return
+      }
+      setLoading(true)
+      try {
+        const res = await getUserNFT721List()
+        setLoading(false)
+        const data = res as any
+        if (!data.data.data) {
+          setResult([])
+          setTotal(0)
+          return
+        }
+        setTotal(data.total)
+        setResult(data.data.data)
+      } catch (error) {
+        setResult([])
+        setTotal(0)
+        setLoading(false)
+        console.error('useUserNFTList', error)
+      }
+    })()
+  }, [currentPage, tokenAddress])
+
+  return {
+    loading: loading,
+    page: {
+      setCurrentPage,
+      currentPage,
+      total,
+      totalPage: Math.ceil(total / pageSize),
+      pageSize
+    },
+    result
+  }
+}
+
+export async function useTransferNFTHistoryList(params: string) {
+  const { account } = useActiveWeb3React()
+
+  return useRequest(
+    async () => {
+      const res = await getUserTransferNFTHistoryList()
+      return res.data
+    },
+    {
+      ready: !!params,
+      pollingInterval: 15000,
+      refreshDeps: [account]
+    }
   )
 }

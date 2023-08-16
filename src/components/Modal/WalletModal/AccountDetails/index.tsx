@@ -6,6 +6,8 @@ import { AppDispatch } from 'state/'
 import { clearAllTransactions } from 'state/transactions/actions'
 import { shortenAddress } from 'utils/'
 import Copy from 'components/essential/Copy'
+import DisconnectIcon from 'assets/svg/disconnect.svg'
+import Image from 'components/Image'
 import Transaction from './Transaction'
 import { SUPPORTED_WALLETS } from 'constants/index'
 import { injected, walletlink } from 'connectors/'
@@ -77,21 +79,26 @@ export default function AccountDetails({
           justifyContent="center"
           alignItems="center"
           marginBottom="20px"
+          gap={10}
           color={theme.palette.text.secondary}
+          sx={{
+            '& img': {
+              cursor: 'pointer'
+            }
+          }}
         >
           {formatConnectorName()}
           {connector !== walletlink && (
-            <Button
-              color="secondary"
-              sx={{ ml: '8px', width: 120, height: 30 }}
+            <Image
               onClick={() => {
                 setInjectedConnected()
                 deactivate()
                 connector?.deactivate()
               }}
-            >
-              Disconnect
-            </Button>
+              src={DisconnectIcon}
+              width={16}
+              height={16}
+            />
           )}
         </Box>
 
@@ -118,10 +125,22 @@ export default function AccountDetails({
         </Box>
       </Box>
       <Box display="flex" gap="10px" width="100%" justifyContent="center">
-        <Button variant="outlined" onClick={toggleWalletModal}>
+        <Button
+          variant="outlined"
+          onClick={toggleWalletModal}
+          sx={{
+            color: '#7A9283',
+            borderColor: '#7A9283',
+            fontWeight: 600
+          }}
+        >
           Close
         </Button>
         <Button
+          sx={{
+            fontWeight: 600,
+            backgroundColor: '#A5FFBE'
+          }}
           onClick={() => {
             openOptions()
           }}

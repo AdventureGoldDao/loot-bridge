@@ -1,10 +1,46 @@
 import { Box, Stack, Typography } from '@mui/material'
 import Arrow from 'assets/svg/arrow_right.svg'
-import EthLogo from 'assets/svg/eth_logo.svg'
-import LootLogo from 'assets/images/logo.png'
 import Image from 'components/Image'
 import { shortenHash } from 'utils'
 import NFT from 'assets/svg/nft-small.svg'
+
+function TopPanel({ direction, detailData }: { direction: 'From' | 'To'; detailData: any }) {
+  return (
+    <Stack
+      mt={18}
+      mb={20}
+      width={260}
+      sx={{
+        backgroundColor: '#111211',
+        borderRadius: '12px',
+        padding: '14px 20px'
+      }}
+    >
+      <Typography color={'#7A9283'}>{direction}</Typography>
+      <Box
+        display={'flex'}
+        justifyContent={'center'}
+        flexDirection={'column'}
+        gap={6}
+        sx={{
+          textAlign: 'center',
+          '& img': {
+            margin: '0 auto'
+          }
+        }}
+      >
+        <Image src={direction === 'From' ? detailData.fromLogo : detailData.toLogo} width={48} height={48} />
+        <Typography color={'#ebebeb'} fontSize={16} fontWeight={500} textAlign={'center'}>
+          {direction === 'From' ? detailData?.from : detailData?.to}
+        </Typography>
+        <Typography fontSize={14}>
+          <span style={{ color: '#7A9283' }}>TxID: </span>
+          <span style={{ color: '#A5FFBE', fontWeight: 700 }}>{shortenHash(detailData?.txHash)}</span>
+        </Typography>
+      </Box>
+    </Stack>
+  )
+}
 
 export default function Detail({
   detailData,
@@ -28,72 +64,8 @@ export default function Detail({
       </Typography>
       <Box>
         <Stack sx={{ position: 'relative' }} direction={'row'} justifyContent={'space-between'}>
-          <Stack
-            mt={18}
-            mb={20}
-            width={260}
-            sx={{
-              backgroundColor: '#111211',
-              borderRadius: '12px',
-              padding: '14px 20px'
-            }}
-          >
-            <Typography color={'#7A9283'}>From</Typography>
-            <Box
-              display={'flex'}
-              justifyContent={'center'}
-              flexDirection={'column'}
-              gap={6}
-              sx={{
-                textAlign: 'center',
-                '& img': {
-                  margin: '0 auto'
-                }
-              }}
-            >
-              <Image src={EthLogo} width={48} height={48} />
-              <Typography color={'#ebebeb'} fontSize={16} fontWeight={500} textAlign={'center'}>
-                Ethereum
-              </Typography>
-              <Typography fontSize={14}>
-                <span style={{ color: '#7A9283' }}>TxID: </span>
-                <span style={{ color: '#A5FFBE', fontWeight: 700 }}>{shortenHash(detailData?.txHash)}</span>
-              </Typography>
-            </Box>
-          </Stack>
-          <Stack
-            mt={18}
-            mb={20}
-            width={260}
-            sx={{
-              backgroundColor: '#111211',
-              borderRadius: '12px',
-              padding: '14px 20px'
-            }}
-          >
-            <Typography color={'#7A9283'}>To</Typography>
-            <Box
-              display={'flex'}
-              justifyContent={'center'}
-              flexDirection={'column'}
-              gap={6}
-              sx={{
-                textAlign: 'center',
-                '& img': {
-                  margin: '0 auto'
-                }
-              }}
-            >
-              <Image src={LootLogo} width={48} height={48} />
-              <Typography color={'#ebebeb'} fontSize={16} fontWeight={500}>
-                Ethereum
-              </Typography>
-              <Typography fontSize={14}>
-                <span style={{ color: '#7A9283' }}>TxID: </span>
-                <span style={{ color: '#A5FFBE', fontWeight: 700 }}>{shortenHash(detailData?.txHash)}</span>
-              </Typography>
-            </Box>
-          </Stack>
+          <TopPanel direction="From" detailData={detailData} />
+          <TopPanel direction="To" detailData={detailData} />
           <Image src={Arrow} width={50} style={{ position: 'absolute', left: '45.5%', top: '33%' }} />
         </Stack>
         <Stack
@@ -123,8 +95,8 @@ export default function Detail({
         >
           <Image src={NFT} width={76} height={76} />
           <Typography>
-            <span className="name">Collection Name</span>
-            <span className="tokenId">NFT Name #003</span>
+            <span className="name">Collection {detailData?.name}</span>
+            <span className="tokenId">NFT Name #{detailData?.tokenId}</span>
           </Typography>
         </Stack>
         <Stack mt={18} spacing={14}>
@@ -132,7 +104,7 @@ export default function Detail({
             Timestamp
           </Typography>
           <Typography color={'#ebebeb'} fontWeight={500} fontSize={16}>
-            2023-07-05 11:23:31
+            {detailData?.timestamp}
           </Typography>
         </Stack>
       </Box>

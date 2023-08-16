@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
-import { useTheme, Box, styled, Typography } from '@mui/material'
+import { useTheme, Box, Typography, Stack } from '@mui/material'
 import { NetworkContextName } from '../../constants'
 import useENSName from '../../hooks/useENSName'
 import { useWalletModalToggle } from '../../state/application/hooks'
@@ -9,16 +9,8 @@ import { TransactionDetails } from '../../state/transactions/reducer'
 import { shortenAddress } from '../../utils'
 import WalletModal from 'components/Modal/WalletModal/index'
 import Spinner from 'components/Spinner'
-import { ReactComponent as Web3StatusIconSvg } from 'assets/svg/web3status_icon.svg'
 import useBreakpoint from 'hooks/useBreakpoint'
 import ActionButton from 'components/Button/ActionButton'
-
-const Web3StatusIcon = styled(Web3StatusIconSvg)(({ theme }) => ({
-  [theme.breakpoints.down('sm')]: {
-    height: '24px',
-    width: '24px'
-  }
-}))
 
 // we want the latest one to come first, so return negative if a is after b
 function newTransactionsFirst(a: TransactionDetails, b: TransactionDetails) {
@@ -48,12 +40,10 @@ function Web3StatusInner() {
         <Box
           sx={{
             height: { xs: 24, sm: 36 },
-            width: { xs: 100, sm: 180 },
-            borderRadius: '46px',
+            width: { xs: 100, sm: 180, md: 264 },
             display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            backgroundColor: theme.palette.background.default
+            justifyContent: 'center',
+            alignItems: 'center'
           }}
         >
           <div />
@@ -67,30 +57,30 @@ function Web3StatusInner() {
               </Box>
             </Box>
           ) : (
-            <Typography
-              sx={{
-                fontSize: { xs: 9, sm: 14 },
-                mr: { xs: 10, sm: 17 },
-                ml: { xs: 10, sm: 20 },
-                color: theme.palette.text.primary
-              }}
-            >
-              {ENSName || shortenAddress(account)}
-            </Typography>
+            <Stack direction={'row'} alignItems={'center'}>
+              <Typography
+                sx={{
+                  fontSize: { xs: 9, sm: 14, md: 18 },
+                  color: '#A5FFBE',
+                  fontWeight: 700
+                }}
+              >
+                Connected: {ENSName || shortenAddress(account)}
+              </Typography>
+            </Stack>
           )}
-          <Web3StatusIcon />
         </Box>
       </Box>
     )
   } else if (error) {
     return (
-      <ActionButton width="200px" onAction={toggleWalletModal}>
+      <ActionButton width="200px" height="40px" onAction={toggleWalletModal}>
         {error instanceof UnsupportedChainIdError ? 'Wrong Network' : 'Error'}
       </ActionButton>
     )
   } else {
     return (
-      <ActionButton width="200px" onAction={toggleWalletModal}>
+      <ActionButton width="200px" height="40px" onAction={toggleWalletModal}>
         Connect Wallet
       </ActionButton>
     )
