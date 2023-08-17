@@ -178,7 +178,7 @@ export default function TxHistory({
               cursor: 'pointer',
               borderRadius: '4px',
               '& th': {
-                width: '25%',
+                width: '20%',
                 borderBottom: '1px solid #3C5141',
                 backgroundColor: '#1A1E1B'
               }
@@ -204,18 +204,22 @@ export default function TxHistory({
                 <TableCell width={'25%'} align="left">
                   Items
                 </TableCell>
-                <TableCell width={'25%'} align="center">
+                <TableCell width={'20%'} align="center">
                   From
                 </TableCell>
-                <TableCell width={'25%'} align="center">
+                <TableCell width={'20%'} align="center">
                   To
                 </TableCell>
-                <TableCell width={'25%'} align="center">
+                <TableCell sx={{ width: '35%!important' }} align="center">
                   Time
                 </TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
+            <TableBody
+              sx={{
+                height: '400px'
+              }}
+            >
               {rows &&
                 rows.map((row: any, index: number) => (
                   <Row
@@ -232,9 +236,11 @@ export default function TxHistory({
                   sx={{
                     width: '100%',
                     position: 'absolute',
+                    top: '50%',
                     color: '#7FB093',
                     fontWeight: 600,
-                    fontSize: 18
+                    fontSize: 18,
+                    textAlign: 'center'
                   }}
                 >
                   No Data

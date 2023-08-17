@@ -19,8 +19,20 @@ export function getUserNFTsByScan(account: string, chainId: number, index: numbe
   })
 }
 
-export function getUserNFT721List() {
-  return Axios.get('user/erc721/list')
+export function getUserOwnedNFT721List(account: string, chainId: number) {
+  return Axios.get(`account/${account}`, {
+    chainId
+  })
+}
+
+// export function getUserOwnedNFT721ListByAddress(account: string, chainId: number) {
+//   return Axios.get(`account/${account}`, {
+//     chainId
+//   })
+// }
+
+export function getUserNFT721Detail(account: string, chainId: number, nftAddress: string) {
+  return Axios.get(`account/${account}/${chainId}/${nftAddress}`)
 }
 
 export function getUserTransferNFTHistoryList() {

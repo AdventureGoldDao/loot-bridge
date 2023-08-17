@@ -1,7 +1,7 @@
 import { Box, Button as MuiButton, ButtonGroup, Typography, styled, Stack, MenuItem } from '@mui/material'
 import activeIcon from 'assets/svg/diamond.svg'
 import Image from 'components/Image'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import SwitchIcon from 'assets/svg/switch.svg'
 import ActionButton from 'components/Button/ActionButton'
 import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
@@ -15,7 +15,7 @@ import TransactiontionSubmittedModal from 'components/Modal/TransactionModals/Tr
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import { useActiveWeb3React } from 'hooks'
 import { ApprovalState } from 'hooks/useApproveCallback'
-import { TRANSFER_NFT_ADDRESS } from '../constants'
+import { NFT_CONTRACT_ADDRESS, TRANSFER_NFT_ADDRESS } from '../constants'
 import Button from 'components/Button/Button'
 import { useNFTApproveAllCallback } from 'hooks/useNFTApproveAllCallback'
 import { useSwitchNetwork } from 'hooks/useSwitchNetwork'
@@ -126,10 +126,9 @@ export enum ActionType {
 
 export interface UserNFTCollection {
   balance?: string // nft token balance
-  contractAddr?: string
-  contractName?: string
+  nftAddress?: string
   description?: string
-  image?: string
+  imageUri?: string
   name?: string
   tokenId: number
 }
@@ -140,7 +139,6 @@ const BackedChainId: { [k: number]: number } = {
 }
 
 export default function Bridge() {
-  // const tokenId = 5
   const { account, chainId } = useActiveWeb3React()
   const [selectedNft, setSelectedNft] = useState<UserNFTCollection>()
   const [fromChain, setFromChain] = useState<Chain | null>(ChainListMap[ChainId.BSCTEST] ?? null)
@@ -150,7 +148,7 @@ export default function Bridge() {
   const [isEnteredDetail, setIsEnteredDetail] = useState(false)
   const [isEnteredCollection, setIsEnteredCollection] = useState(false)
   const dstId = useMemo(() => BackedChainId[toChain?.id as number], [toChain])
-  const transfer = useTransferNFTCallback(dstId, selectedNft !== undefined ? selectedNft.tokenId : 0)
+  const { run: transfer, tFee } = useTransferNFTCallback(dstId, selectedNft !== undefined ? selectedNft : undefined)
   const { showModal, hideModal } = useModal()
   const switchNetwork = useSwitchNetwork()
   const toggleWalletModal = useWalletModalToggle()
@@ -160,7 +158,11 @@ export default function Bridge() {
     setToChain(fromChain)
   }, [fromChain, toChain])
 
-  console.log(isLoading, dstId)
+  console.log(isLoading, selectedNft)
+
+  useEffect(() => {
+    setSelectedNft(undefined)
+  }, [account, chainId])
 
   const transferClick = useCallback(() => {
     if (!account || !dstId || !selectedNft) return
@@ -190,7 +192,7 @@ export default function Bridge() {
   }, [toChain?.id])
 
   const [approveState, approveCallback] = useNFTApproveAllCallback(
-    TRANSFER_NFT_ADDRESS[chainId as ChainId],
+    NFT_CONTRACT_ADDRESS[chainId as ChainId],
     chainId ? TRANSFER_NFT_ADDRESS[chainId as ChainId] : undefined
   )
 
@@ -507,7 +509,7 @@ export default function Bridge() {
                           margin: '20px 0'
                         }}
                       >
-                        <Image width={76} style={{ borderRadius: '7px' }} src={selectedNft?.image || ''} />
+                        <Image width={76} style={{ borderRadius: '7px' }} src={selectedNft?.imageUri || ''} />
                         <Box ml={34}>
                           <Typography color={'#7A9283'} fontSize={18} fontWeight={500}>
                             {selectedNft.name}
@@ -541,10 +543,13 @@ export default function Bridge() {
                       }}
                     >
                       <Typography>
-                        Fees: <span>0</span>
+                        Fees:{' '}
+                        <span>
+                          {tFee?.toSignificant() || '--'} {fromChain?.symbol}
+                        </span>
                       </Typography>
                       <Typography>
-                        Estimated Time: <span>3 mins</span>
+                        Estimated Time: <span>3 ~ 5 mins</span>
                       </Typography>
                     </Stack>
                     {ActionButtonNode}
@@ -574,7 +579,25 @@ export default function Bridge() {
                 </MuiButton>
               </StyledButtonGroup>
             )}
-            {action === ActionType.WITHDRAW ? (
+            {!account ? (
+              <Box
+                sx={{
+                  height: 'calc(100% - 50px)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: 20,
+                  justifyContent: 'center'
+                }}
+              >
+                <Typography color={'#7A9283'} textAlign={'center'} fontSize={16}>
+                  Please connect your wallet to view account information
+                </Typography>
+                <Button style={{ height: 50, width: '100%', fontSize: 20 }} onClick={toggleWalletModal}>
+                  Connect Wallet
+                </Button>
+              </Box>
+            ) : action === ActionType.WITHDRAW ? (
               <TxHistory isEnteredDetail={isEnteredDetail} setIsEnteredDetail={setIsEnteredDetail} />
             ) : (
               <ComingSoon />

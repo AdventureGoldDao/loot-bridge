@@ -2,34 +2,12 @@ import { Box, Stack, Typography } from '@mui/material'
 import PopperCard from './PopperCard'
 import Image from 'components/Image'
 import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
+import SearchIcon from 'assets/svg/search.svg'
 import { Chain } from 'models/chain'
 import { UserNFTCollection } from 'pages/Bridge'
 import { useState } from 'react'
-import Logo from 'assets/svg/nft-small.svg'
-
-const tokenNFTList = [
-  {
-    tokenAddress: '0x1EFB2Cb5015FDd13120dF72BB152c8Ec91bCD68e',
-    name: 'ONFT721'
-  }
-]
-
-const userNFTList: UserNFTCollection[] = [
-  {
-    name: 'ONFT721',
-    contractAddr: '0x1EFB2Cb5015FDd13120dF72BB152c8Ec91bCD68e',
-    image: Logo,
-    tokenId: 5,
-    balance: ''
-  },
-  {
-    name: 'ONFT721',
-    contractAddr: '0x1EFB2Cb5015FDd13120dF72BB152c8Ec91bCD68e',
-    image: Logo,
-    tokenId: 4,
-    balance: ''
-  }
-]
+import { useGetNFTDetail, useUserOwnedNFTList } from 'hooks/useTransferNFT'
+import { useActiveWeb3React } from 'hooks'
 
 export default function Collection({
   setSelectedNft,
@@ -40,7 +18,11 @@ export default function Collection({
   fromChain: Chain | null
   setIsEnteredCollection: React.Dispatch<React.SetStateAction<boolean>>
 }) {
+  const { account } = useActiveWeb3React()
   const [collection, setCollection] = useState<any>()
+  console.log('🚀 ~ file: Collection.tsx:23 ~ collection:', collection)
+  const { data: tokenNFTList } = useUserOwnedNFTList(account || '', fromChain?.id || 1)
+  const { data: nftList } = useGetNFTDetail(account || '', fromChain?.id || 1, collection?.nftAddress || '')
 
   return (
     <Stack>
@@ -91,14 +73,14 @@ export default function Collection({
             }}
           >
             <Stack direction={'row'} spacing={19} alignItems={'center'}>
-              <Typography>{collection ? collection.name : 'Select a Collection'}</Typography>
+              <Typography>{collection ? 'Collection ' + collection.id : 'Select a Collection'}</Typography>
             </Stack>
             <ArrowIcon />
           </Box>
         }
       >
         <>
-          {tokenNFTList.map(option => (
+          {tokenNFTList?.list?.map((option: any) => (
             <Box
               key={option.tokenAddress}
               sx={{
@@ -114,14 +96,28 @@ export default function Collection({
               }}
               onClick={() => setCollection(option)}
             >
-              {option.name}
+              Collection {option.id}
             </Box>
           ))}
+          {tokenNFTList?.list?.length === 0 && (
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                color: '#fff',
+                fontSize: 20,
+                lineHeight: '150%'
+              }}
+            >
+              No Collection
+            </Box>
+          )}
         </>
       </PopperCard>
       <Stack
         mt={15}
-        justifyContent={'flex-start'}
+        justifyContent={collection === undefined ? 'center' : 'flex-start'}
         direction={'column'}
         spacing={12}
         sx={{
@@ -132,7 +128,7 @@ export default function Collection({
           overflowY: 'auto'
         }}
       >
-        {userNFTList.map(option => (
+        {nftList?.list?.map((option: any) => (
           <>
             <Stack
               height={70}
@@ -160,7 +156,7 @@ export default function Collection({
               }}
             >
               <Stack>
-                <Image src={option.image || ''} width={44} style={{ borderRadius: '50%' }} />
+                <Image src={option.imageUri || ''} width={44} style={{ borderRadius: '50%' }} />
                 <Typography ml={10} color={'#A5FFBE'} fontSize={20} fontWeight={600}>
                   {option.name}
                 </Typography>
@@ -171,6 +167,36 @@ export default function Collection({
             </Stack>
           </>
         ))}
+        {nftList?.list?.length === 0 && (
+          <Box
+            sx={{
+              height: 400,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              color: '#fff',
+              fontSize: 20,
+              lineHeight: '150%'
+            }}
+          >
+            No Data
+          </Box>
+        )}
+        {collection === undefined && (
+          <Box
+            sx={{
+              display: 'flex',
+              width: '100%',
+              justifyContent: 'center',
+              alignItems: 'center',
+              '& img': {
+                margin: 'auto'
+              }
+            }}
+          >
+            <Image src={SearchIcon} width={56} />
+          </Box>
+        )}
       </Stack>
     </Stack>
   )

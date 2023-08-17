@@ -9,8 +9,8 @@ import Web3ReactManager from '../components/essential/Web3ReactManager'
 // import ComingSoon from './ComingSoon'
 import { ModalProvider } from 'context/ModalContext'
 import { routes } from 'constants/routes'
-import Home from './Home'
-import Explorer from './Explorer'
+// import Home from './Home'
+// import Explorer from './Explorer'
 // import Footer from 'components/Footer'
 import BG from 'assets/images/home-bg.png'
 import Bridge from './Bridge'
@@ -68,10 +68,10 @@ export default function App() {
               {/* <WarningModal /> */}
               <Web3ReactManager>
                 <Routes>
-                  <Route path={routes.HOME} element={<Home />} />
+                  {/* <Route path={routes.HOME} element={<Home />} /> */}
                   <Route path={routes.BRIDGE} element={<Bridge />} />
-                  <Route path={routes.EXPLORER} element={<Explorer />} />
-                  <Route path="/" element={<Navigate to={routes.HOME} replace />} />
+                  {/* <Route path={routes.EXPLORER} element={<Explorer />} /> */}
+                  <Route path="/" element={<Navigate to={routes.BRIDGE} replace />} />
                 </Routes>
               </Web3ReactManager>
             </BodyWrapper>
