@@ -223,7 +223,7 @@ export default function Bridge() {
     transfer(account, dstId, account, selectedNft.tokenId, account)
       .then(hash => {
         hideModal()
-        showModal(<TransactiontionSubmittedModal hash={hash} />)
+        showModal(<TransactiontionSubmittedModal hash={hash} hideFunc={() => setSelectedNft(undefined)} />)
       })
       .catch((err: any) => {
         hideModal()
