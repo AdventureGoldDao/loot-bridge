@@ -158,7 +158,7 @@ function TargetElement({ chain }: { chain: Chain | null }) {
       }}
     >
       <Stack direction={'row'} spacing={19} alignItems={'center'}>
-        <Image width={40} src={chain?.logo || Logo} />
+        <Image width={40} height={40} src={chain?.logo || Logo} />
         <Typography>{chain?.symbol || 'AGLD'}</Typography>
       </Stack>
       <ArrowIcon />
