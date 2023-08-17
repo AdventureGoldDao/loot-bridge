@@ -3,8 +3,11 @@ import Arrow from 'assets/svg/arrow_right.svg'
 import Image from 'components/Image'
 import { shortenHash } from 'utils'
 import NFT from 'assets/svg/nft-small.svg'
+import { ChainListMap } from 'constants/chain'
+import { Props } from './TxHistory'
+import moment from 'moment'
 
-function TopPanel({ direction, detailData }: { direction: 'From' | 'To'; detailData: any }) {
+function TopPanel({ direction, detailData }: { direction: 'From' | 'To'; detailData: Props }) {
   return (
     <Stack
       mt={18}
@@ -29,13 +32,25 @@ function TopPanel({ direction, detailData }: { direction: 'From' | 'To'; detailD
           }
         }}
       >
-        <Image src={direction === 'From' ? detailData.fromLogo : detailData.toLogo} width={48} height={48} />
+        <Image
+          src={
+            direction === 'From'
+              ? ChainListMap[detailData?.fromChain || 1]?.logo || ''
+              : ChainListMap[detailData?.toChain || 1]?.logo || ''
+          }
+          width={48}
+          height={48}
+        />
         <Typography color={'#ebebeb'} fontSize={16} fontWeight={500} textAlign={'center'}>
-          {direction === 'From' ? detailData?.from : detailData?.to}
+          {direction === 'From'
+            ? ChainListMap[detailData?.fromChain || 1]?.name
+            : ChainListMap[detailData?.toChain || 1]?.name}
         </Typography>
         <Typography fontSize={14}>
           <span style={{ color: '#7A9283' }}>TxID: </span>
-          <span style={{ color: '#A5FFBE', fontWeight: 700 }}>{shortenHash(detailData?.txHash)}</span>
+          <span style={{ color: '#A5FFBE', fontWeight: 700 }}>
+            {shortenHash(direction === 'From' ? detailData?.sentTx || '' : detailData?.receivedTx || '')}
+          </span>
         </Typography>
       </Box>
     </Stack>
@@ -95,8 +110,10 @@ export default function Detail({
         >
           <Image src={NFT} width={76} height={76} />
           <Typography>
-            <span className="name">Collection {detailData?.name}</span>
-            <span className="tokenId">NFT Name #{detailData?.tokenId}</span>
+            <span className="name">{detailData?.contractName || 'Collection'}</span>
+            <span className="tokenId">
+              {detailData?.nft.name} #{detailData?.tokenId}
+            </span>
           </Typography>
         </Stack>
         <Stack mt={18} spacing={14}>
@@ -104,7 +121,7 @@ export default function Detail({
             Timestamp
           </Typography>
           <Typography color={'#ebebeb'} fontWeight={500} fontSize={16}>
-            {detailData?.timestamp}
+            {moment(detailData?.timestamp * 1000).format('YYYY-MM-DD HH:MM:SS')}
           </Typography>
         </Stack>
       </Box>

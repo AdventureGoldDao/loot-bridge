@@ -109,16 +109,16 @@ export function useUserOwnedNFTList(account: string, chainId: number) {
   )
 }
 
-export function useTransferNFTHistoryList(params: string) {
-  const { account } = useActiveWeb3React()
-
+export function useTransferNFTHistoryList(account: string) {
   return useRequest(
     async () => {
-      const res = await getUserTransferNFTHistoryList()
-      return res.data.data
+      const res = await getUserTransferNFTHistoryList(account)
+      return {
+        list: res.data.data
+      }
     },
     {
-      ready: !!params,
+      ready: !!account,
       pollingInterval: 15000,
       refreshDeps: [account]
     }

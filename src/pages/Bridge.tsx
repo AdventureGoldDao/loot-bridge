@@ -138,6 +138,59 @@ const BackedChainId: { [k: number]: number } = {
   [ChainId.MUMBAI_POLYGON]: 10109
 }
 
+function TargetElement({ chain }: { chain: Chain | null }) {
+  return (
+    <Box
+      sx={{
+        height: 70,
+        color: '#A5FFBE',
+        display: 'flex',
+        padding: '10px',
+        cursor: 'pointer',
+        alignItems: 'center',
+        '& svg': {
+          margin: '0 40px 0 auto'
+        },
+        '& p': {
+          color: '#ebebeb',
+          fontSize: 20
+        }
+      }}
+    >
+      <Stack direction={'row'} spacing={19} alignItems={'center'}>
+        <Image width={40} src={chain?.logo || Logo} />
+        <Typography>{chain?.symbol || 'AGLD'}</Typography>
+      </Stack>
+      <ArrowIcon />
+    </Box>
+  )
+}
+
+function ActionButtonGroup({
+  action,
+  setAction
+}: {
+  action: ActionType
+  setAction: React.Dispatch<React.SetStateAction<ActionType>>
+}) {
+  return (
+    <StyledButtonGroup>
+      <MuiButton
+        className={action === ActionType.DEPOSIT ? 'active' : ''}
+        onClick={() => setAction(ActionType.DEPOSIT)}
+      >
+        Fungible Token
+      </MuiButton>
+      <MuiButton
+        className={action === ActionType.WITHDRAW ? 'active' : ''}
+        onClick={() => setAction(ActionType.WITHDRAW)}
+      >
+        NFT
+      </MuiButton>
+    </StyledButtonGroup>
+  )
+}
+
 export default function Bridge() {
   const { account, chainId } = useActiveWeb3React()
   const [selectedNft, setSelectedNft] = useState<UserNFTCollection>()
@@ -293,22 +346,7 @@ export default function Bridge() {
         </ControllBtn>
         {active === TabState.BRIDGE && (
           <Panel>
-            {!isEnteredDetail && !isEnteredCollection && (
-              <StyledButtonGroup>
-                <MuiButton
-                  className={action === ActionType.DEPOSIT ? 'active' : ''}
-                  onClick={() => setAction(ActionType.DEPOSIT)}
-                >
-                  Fungible Token
-                </MuiButton>
-                <MuiButton
-                  className={action === ActionType.WITHDRAW ? 'active' : ''}
-                  onClick={() => setAction(ActionType.WITHDRAW)}
-                >
-                  NFT
-                </MuiButton>
-              </StyledButtonGroup>
-            )}
+            {!isEnteredDetail && !isEnteredCollection && <ActionButtonGroup action={action} setAction={setAction} />}
             {action === ActionType.WITHDRAW ? (
               <>
                 {isEnteredCollection === true ? (
@@ -340,31 +378,7 @@ export default function Bridge() {
                             }
                           }}
                           placement="bottom-start"
-                          targetElement={
-                            <Box
-                              sx={{
-                                height: 70,
-                                color: '#A5FFBE',
-                                display: 'flex',
-                                padding: '10px',
-                                cursor: 'pointer',
-                                alignItems: 'center',
-                                '& svg': {
-                                  margin: '0 40px 0 auto'
-                                },
-                                '& p': {
-                                  color: '#ebebeb',
-                                  fontSize: 20
-                                }
-                              }}
-                            >
-                              <Stack direction={'row'} spacing={19} alignItems={'center'}>
-                                <Image width={40} src={fromChain?.logo || Logo} />
-                                <Typography>{fromChain?.symbol || 'AGLD'}</Typography>
-                              </Stack>
-                              <ArrowIcon />
-                            </Box>
-                          }
+                          targetElement={<TargetElement chain={fromChain} />}
                         >
                           <>
                             {fromChainList.map(option => (
@@ -425,31 +439,7 @@ export default function Bridge() {
                             }
                           }}
                           placement="bottom-start"
-                          targetElement={
-                            <Box
-                              sx={{
-                                height: 70,
-                                color: '#A5FFBE',
-                                display: 'flex',
-                                padding: '10px',
-                                cursor: 'pointer',
-                                alignItems: 'center',
-                                '& svg': {
-                                  margin: '0 40px 0 auto'
-                                },
-                                '& p': {
-                                  color: '#ebebeb',
-                                  fontSize: 20
-                                }
-                              }}
-                            >
-                              <Stack direction={'row'} spacing={19} alignItems={'center'}>
-                                <Image width={40} src={toChain?.logo || Logo} />
-                                <Typography>{toChain?.symbol || 'AGLD'}</Typography>
-                              </Stack>
-                              <ArrowIcon />
-                            </Box>
-                          }
+                          targetElement={<TargetElement chain={toChain} />}
                         >
                           <>
                             {toChainList.map(option => (
@@ -520,7 +510,6 @@ export default function Bridge() {
                         </Box>
                       </Stack>
                     )}
-
                     <Stack
                       mb={20}
                       direction={'row'}
@@ -563,22 +552,7 @@ export default function Bridge() {
         )}
         {active === TabState.ACCOUNT && (
           <Panel>
-            {!isEnteredDetail && (
-              <StyledButtonGroup>
-                <MuiButton
-                  className={action === ActionType.DEPOSIT ? 'active' : ''}
-                  onClick={() => setAction(ActionType.DEPOSIT)}
-                >
-                  Fungible Token
-                </MuiButton>
-                <MuiButton
-                  className={action === ActionType.WITHDRAW ? 'active' : ''}
-                  onClick={() => setAction(ActionType.WITHDRAW)}
-                >
-                  NFT
-                </MuiButton>
-              </StyledButtonGroup>
-            )}
+            {!isEnteredDetail && <ActionButtonGroup action={action} setAction={setAction} />}
             {!account ? (
               <Box
                 sx={{

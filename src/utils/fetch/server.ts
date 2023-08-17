@@ -25,16 +25,10 @@ export function getUserOwnedNFT721List(account: string, chainId: number) {
   })
 }
 
-// export function getUserOwnedNFT721ListByAddress(account: string, chainId: number) {
-//   return Axios.get(`account/${account}`, {
-//     chainId
-//   })
-// }
-
 export function getUserNFT721Detail(account: string, chainId: number, nftAddress: string) {
   return Axios.get(`account/${account}/${chainId}/${nftAddress}`)
 }
 
-export function getUserTransferNFTHistoryList() {
-  return Axios.get('user/history/list')
+export function getUserTransferNFTHistoryList(account: string) {
+  return Axios.get(`account/${account}/bridgeRecords`)
 }

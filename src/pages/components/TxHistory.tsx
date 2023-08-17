@@ -1,14 +1,21 @@
 import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
 import { Fragment, useCallback, useState } from 'react'
 import Detail from './Detail'
-import EthLogo from 'assets/svg/eth_logo.svg'
-import LootLogo from 'assets/images/logo.png'
+// import EthLogo from 'assets/svg/eth_logo.svg'
+// import LootLogo from 'assets/images/logo.png'
+import Image from 'components/Image'
+import { useActiveWeb3React } from 'hooks'
+import { useTransferNFTHistoryList } from 'hooks/useTransferNFT'
+import { ChainId, ChainListMap } from 'constants/chain'
+import moment from 'moment'
 
-interface Props {
+export interface Props {
   timestamp: string
-  txHash: string
-  from: string
-  to: string
+  nft: any
+  fromChain: ChainId
+  toChain: ChainId
+  sentTx: string
+  receivedTx: string
   name: string
   tokenId: number
 }
@@ -20,105 +27,24 @@ function Row(props: { row: Props; onClick: () => void }) {
     <Fragment>
       <TableRow sx={{ '& > *': { borderBottom: 'unset' } }} onClick={onClick}>
         <TableCell>
-          <Typography>{row.name}</Typography>
-          <Typography>#{row.tokenId}</Typography>
+          <Typography>{row.nft?.name || '--'}</Typography>
+          <Typography>#{row.nft?.tokenId}</Typography>
         </TableCell>
         <TableCell align="center">
-          <Typography>{row.from}</Typography>
+          <Image src={ChainListMap[row.fromChain || 1]?.logo || ''} width={26} height={26} />
         </TableCell>
         <TableCell align="center">
-          <Typography>{row.to}</Typography>
+          <Image src={ChainListMap[row.toChain || 1]?.logo || ''} width={26} height={26} />
         </TableCell>
-        <TableCell align="right">
-          <Typography color={'#A5FFBE'}>{row.timestamp}</Typography>
+        <TableCell align="center">
+          <Typography color={'#A5FFBE'}>
+            {moment(Number(row.timestamp) * 1000).format('YYYY-MM-DD HH:MM:SS')}
+          </Typography>
         </TableCell>
       </TableRow>
     </Fragment>
   )
 }
-
-export const rows: any = [
-  {
-    timestamp: '2023/05/24 00:00:00',
-    from: 'Ethereum',
-    to: 'Loot',
-    fromLogo: EthLogo,
-    toLogo: LootLogo,
-    txHash: '0xe41f3de68a6d35925a91435f64bd8988afd330260545d5db1b18c839ec7a8501',
-    name: 'Completed',
-    tokenId: 0
-  },
-  {
-    timestamp: '2023/05/24 00:00:00',
-    from: 'Ethereum',
-    to: 'Loot',
-    fromLogo: EthLogo,
-    toLogo: LootLogo,
-    txHash: '0xe41f3de68a6d35925a91435f64bd8988afd330260545d5db1b18c839ec7a8501',
-    name: 'Completed',
-    tokenId: 1
-  },
-  {
-    timestamp: '2023/05/24 00:00:00',
-    from: 'Ethereum',
-    to: 'Loot',
-    fromLogo: EthLogo,
-    toLogo: LootLogo,
-    txHash: '0xe41f3de68a6d35925a91435f64bd8988afd330260545d5db1b18c839ec7a8501',
-    name: 'Completed',
-    tokenId: 2
-  },
-  {
-    timestamp: '2023/05/24 00:00:00',
-    from: 'Ethereum',
-    to: 'Loot',
-    fromLogo: EthLogo,
-    toLogo: LootLogo,
-    txHash: '0xe41f3de68a6d35925a91435f64bd8988afd330260545d5db1b18c839ec7a8501',
-    name: 'Completed',
-    tokenId: 3
-  },
-  {
-    timestamp: '2023/05/24 00:00:00',
-    from: 'Ethereum',
-    to: 'Loot',
-    fromLogo: EthLogo,
-    toLogo: LootLogo,
-    txHash: '0xe41f3de68a6d35925a91435f64bd8988afd330260545d5db1b18c839ec7a8501',
-    name: 'Completed',
-    tokenId: 4
-  },
-  {
-    timestamp: '2023/05/24 00:00:00',
-    from: 'Ethereum',
-    to: 'Loot',
-    fromLogo: EthLogo,
-    toLogo: LootLogo,
-    txHash: '0xe41f3de68a6d35925a91435f64bd8988afd330260545d5db1b18c839ec7a8501',
-    name: 'Completed',
-    tokenId: 5
-  },
-  {
-    timestamp: '2023/05/24 00:00:00',
-    from: 'Ethereum',
-    to: 'Loot',
-    fromLogo: EthLogo,
-    toLogo: LootLogo,
-    txHash: '0xe41f3de68a6d35925a91435f64bd8988afd330260545d5db1b18c839ec7a8501',
-    name: 'Completed',
-    tokenId: 6
-  },
-  {
-    timestamp: '2023/05/24 00:00:00',
-    from: 'Ethereum',
-    to: 'Loot',
-    fromLogo: EthLogo,
-    toLogo: LootLogo,
-    txHash: '0xe41f3de68a6d35925a91435f64bd8988afd330260545d5db1b18c839ec7a8501',
-    name: 'Completed',
-    tokenId: 7
-  }
-]
 
 export default function TxHistory({
   // action,
@@ -132,6 +58,8 @@ export default function TxHistory({
   setIsEnteredDetail: React.Dispatch<React.SetStateAction<boolean>>
 }) {
   const [tableIndex, setTableIndex] = useState(-1)
+  const { account } = useActiveWeb3React()
+  const { data: historyList } = useTransferNFTHistoryList(account || '')
   console.log(isEnteredDetail, tableIndex)
   const handleClick = useCallback((index: number) => {
     setTableIndex(index)
@@ -140,7 +68,7 @@ export default function TxHistory({
   return (
     <>
       {isEnteredDetail === true ? (
-        <Detail detailData={rows[tableIndex]} setIsEnteredDetail={setIsEnteredDetail} />
+        <Detail detailData={historyList?.list[tableIndex]} setIsEnteredDetail={setIsEnteredDetail} />
       ) : (
         <TableContainer
           component={Paper}
@@ -160,7 +88,7 @@ export default function TxHistory({
             '& .MuiTable-root': {
               backgroundColor: '#1A1E1B',
               borderRadius: '10px',
-              paddingBottom: 20
+              paddingBottom: historyList?.list?.length === 0 ? 0 : 20
             },
             '& .MuiTableHead-root': {
               color: '#7FB093',
@@ -220,18 +148,17 @@ export default function TxHistory({
                 height: '400px'
               }}
             >
-              {rows &&
-                rows.map((row: any, index: number) => (
-                  <Row
-                    key={row.txHash + index}
-                    row={row}
-                    onClick={() => {
-                      handleClick(index)
-                      setIsEnteredDetail(true)
-                    }}
-                  />
-                ))}
-              {rows.length === 0 ? (
+              {historyList?.list?.map((row: any, index: number) => (
+                <Row
+                  key={row.txHash + index}
+                  row={row}
+                  onClick={() => {
+                    handleClick(index)
+                    setIsEnteredDetail(true)
+                  }}
+                />
+              ))}
+              {historyList?.list?.length === 0 ? (
                 <Box
                   sx={{
                     width: '100%',
