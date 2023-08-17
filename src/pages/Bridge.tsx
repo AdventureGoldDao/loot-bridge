@@ -291,6 +291,7 @@ export default function Bridge() {
     chainId,
     fromChain?.id,
     fromChain?.name,
+    selectedNft,
     switchNetwork,
     toggleWalletModal,
     transferClick
