@@ -197,7 +197,7 @@ export default function Bridge() {
   const [fromChain, setFromChain] = useState<Chain | null>(ChainListMap[ChainId.BSCTEST] ?? null)
   const [toChain, setToChain] = useState<Chain | null>(ChainListMap[ChainId.MUMBAI_POLYGON] ?? null)
   const [active, setActive] = useState(TabState.BRIDGE)
-  const [action, setAction] = useState(ActionType.DEPOSIT)
+  const [action, setAction] = useState(ActionType.WITHDRAW)
   const [isEnteredDetail, setIsEnteredDetail] = useState(false)
   const [isEnteredCollection, setIsEnteredCollection] = useState(false)
   const dstId = useMemo(() => BackedChainId[toChain?.id as number], [toChain])
@@ -257,7 +257,7 @@ export default function Bridge() {
         </Button>
       )
     }
-    if (approveState !== ApprovalState.APPROVED) {
+    if (approveState !== ApprovalState.APPROVED && selectedNft) {
       if (approveState === ApprovalState.PENDING) {
         return (
           <Button style={{ height: 50, width: '100%', fontSize: 20 }}>Approving use of {fromChain?.name} NFT...</Button>
