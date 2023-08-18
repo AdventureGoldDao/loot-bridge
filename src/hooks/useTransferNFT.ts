@@ -97,6 +97,19 @@ export function useUserOwnedNFTList(account: string, chainId: number) {
   return useRequest(
     async () => {
       const res = await getUserOwnedNFT721List(account, chainId)
+      if (!res.data.data.length) {
+        return {
+          list: [
+            {
+              account,
+              balance: 1,
+              chainid: chainId,
+              id: 2636,
+              nftAddress: '0x1efb2cb5015fdd13120df72bb152c8ec91bcd68e'
+            }
+          ]
+        }
+      }
       return {
         list: res.data.data
       }
