@@ -283,6 +283,13 @@ export default function Bridge() {
           Switch Network
         </Button>
       )
+    if (!selectedNft) {
+      return (
+        <Button style={{ height: 50, width: '100%', fontSize: 20 }} disabled>
+          Select NFT
+        </Button>
+      )
+    }
     return <ActionButton width="100%" height="50px" onAction={transferClick} actionText="Transfer" />
   }, [
     account,

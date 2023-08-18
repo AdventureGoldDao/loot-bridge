@@ -5,7 +5,7 @@ import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
 import SearchIcon from 'assets/svg/search.svg'
 import { Chain } from 'models/chain'
 import { UserNFTCollection } from 'pages/Bridge'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useGetNFTDetail, useUserOwnedNFTList } from 'hooks/useTransferNFT'
 import { useActiveWeb3React } from 'hooks'
 
@@ -19,11 +19,13 @@ export default function Collection({
   setIsEnteredCollection: React.Dispatch<React.SetStateAction<boolean>>
 }) {
   const { account } = useActiveWeb3React()
-  const [collection, setCollection] = useState<any>()
-  console.log('🚀 ~ file: Collection.tsx:23 ~ collection:', collection)
   const { data: tokenNFTList } = useUserOwnedNFTList(account || '', fromChain?.id || 1)
+  const [collection, setCollection] = useState<any>()
   const { data: nftList } = useGetNFTDetail(account || '', fromChain?.id || 1, collection?.nftAddress || '')
 
+  useEffect(() => {
+    !collection && setCollection(tokenNFTList?.list?.[0])
+  }, [collection, tokenNFTList?.list])
   return (
     <Stack>
       <Typography
@@ -73,7 +75,7 @@ export default function Collection({
             }}
           >
             <Stack direction={'row'} spacing={19} alignItems={'center'}>
-              <Typography>{collection ? 'Collection ' + collection.id : 'Select a Collection'}</Typography>
+              <Typography>{collection ? 'Loot' : 'Select a Collection'}</Typography>
             </Stack>
             <ArrowIcon />
           </Box>
@@ -96,7 +98,7 @@ export default function Collection({
               }}
               onClick={() => setCollection(option)}
             >
-              Collection {option.id}
+              Loot
             </Box>
           ))}
           {tokenNFTList?.list?.length === 0 && (

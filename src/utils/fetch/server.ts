@@ -19,9 +19,9 @@ export function getUserNFTsByScan(account: string, chainId: number, index: numbe
   })
 }
 
-export function getUserOwnedNFT721List(account: string, chainId: number) {
+export function getUserOwnedNFT721List(account: string, chainid: number) {
   return Axios.get(`account/${account}`, {
-    chainId
+    chainid
   })
 }
 
