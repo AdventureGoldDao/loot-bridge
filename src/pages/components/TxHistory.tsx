@@ -88,7 +88,7 @@ export default function TxHistory({
             '& .MuiTable-root': {
               backgroundColor: '#1A1E1B',
               borderRadius: '10px'
-              // paddingBottom: historyList?.list?.length === 0 ? 0 : 20
+              // height: 457
             },
             '& .MuiTableHead-root': {
               color: '#7FB093',
@@ -120,6 +120,7 @@ export default function TxHistory({
               '& tr:nth-of-type(2n)': {}
             },
             '& .MuiTableCell-root': {
+              verticalAlign: 'middle',
               color: '#7FB093',
               border: 'none',
               borderImage: 'none'
@@ -145,8 +146,7 @@ export default function TxHistory({
             </TableHead>
             <TableBody
               sx={{
-                maxHeight: '400px',
-                height: '400px'
+                maxHeight: '400px'
               }}
             >
               {historyList?.list?.map((row: any, index: number) => (

@@ -1,13 +1,15 @@
 import { Box, Stack, Typography } from '@mui/material'
 import Arrow from 'assets/svg/arrow_right.svg'
 import Image from 'components/Image'
-import { shortenHash } from 'utils'
+import { getEtherscanLink, shortenHash } from 'utils'
 import NFT from 'assets/svg/nft-small.svg'
 import { ChainListMap } from 'constants/chain'
 import { Props } from './TxHistory'
 import moment from 'moment'
 
 function TopPanel({ direction, detailData }: { direction: 'From' | 'To'; detailData: Props }) {
+  console.log('detailData', detailData)
+
   return (
     <Stack
       mt={18}
@@ -48,7 +50,19 @@ function TopPanel({ direction, detailData }: { direction: 'From' | 'To'; detailD
         </Typography>
         <Typography fontSize={14}>
           <span style={{ color: '#7A9283' }}>TxID: </span>
-          <span style={{ color: '#A5FFBE', fontWeight: 700 }}>
+          <span
+            style={{ color: '#A5FFBE', fontWeight: 700, cursor: 'pointer' }}
+            onClick={() => {
+              window.open(
+                getEtherscanLink(
+                  detailData && direction === 'From' ? detailData.fromChain : detailData.toChain,
+                  direction === 'From' ? detailData?.sentTx || '' : detailData?.receivedTx || '',
+                  'transaction'
+                ),
+                '_blank'
+              )
+            }}
+          >
             {shortenHash(direction === 'From' ? detailData?.sentTx || '' : detailData?.receivedTx || '')}
           </span>
         </Typography>
