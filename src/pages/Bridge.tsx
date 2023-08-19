@@ -301,7 +301,7 @@ export default function Bridge() {
         </Button>
       )
     }
-    return <ActionButton width="100%" height="50px" onAction={transferClick} actionText="Transfer" />
+    return <ActionButton width="100%" height="50px" onAction={transferClick} actionText="Bridge" />
   }, [account, balance, chainId, fromChain?.id, selectedNft, switchNetwork, tFee, toggleWalletModal, transferClick])
 
   return (

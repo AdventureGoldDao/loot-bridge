@@ -24,7 +24,7 @@ export default function TransactionSubmittedModal({
           <ExternalLink
             underline="always"
             href={getEtherscanLink(chainId, hash, 'transaction')}
-            style={{ color: '#ffffff', fontSize: 12 }}
+            style={{ color: '#31b047', fontSize: 12 }}
           >
             View on explorer
           </ExternalLink>
