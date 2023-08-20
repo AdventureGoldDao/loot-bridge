@@ -168,7 +168,8 @@ export default function TxHistory({
                     color: '#7FB093',
                     fontWeight: 600,
                     fontSize: 18,
-                    textAlign: 'center'
+                    textAlign: 'center',
+                    backgroundColor: '#1a1e1b'
                   }}
                 >
                   No Data

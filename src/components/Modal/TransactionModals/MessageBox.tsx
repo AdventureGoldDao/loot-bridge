@@ -38,7 +38,15 @@ export default function MessageBox({ type, children, width = '480px', header, ac
   return (
     <Modal width={width} background="#1B1F1C">
       <Box display={'grid'} alignItems={'center'} padding={'40px'} justifyItems="center" gap="20px">
-        <Box>{icon}</Box>
+        <Box
+          sx={{
+            '& svg path': {
+              fill: type === 'success' ? '#A5FFBE' : 'unset'
+            }
+          }}
+        >
+          {icon}
+        </Box>
         {header && <Typography variant="h6">{header}</Typography>}
         <Box color="#A5FFBE" fontSize="18px" textAlign="center" display="grid" justifyItems="center" width="100%">
           {children}
