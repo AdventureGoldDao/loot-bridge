@@ -39,12 +39,12 @@ export const theme = {
   palette: {
     primary: {
       light: '#ADDFB5',
-      main: '#31B047',
+      main: '#A5FFBE',
       dark: '#129026',
       contrastText: '#ffffff'
     },
     secondary: {
-      light: '#31B047',
+      light: '#A5FFBE',
       main: '#D4F3D8',
       dark: '#129026',
       contrastText: '#ffffff'
@@ -60,7 +60,7 @@ export const theme = {
       main: '#F0B90B'
     },
     success: {
-      main: '#31B047'
+      main: '#A5FFBE'
     },
     background: {
       default: '#F2F5FA',

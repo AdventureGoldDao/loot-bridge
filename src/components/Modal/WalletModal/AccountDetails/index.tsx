@@ -80,7 +80,7 @@ export default function AccountDetails({
           alignItems="center"
           marginBottom="20px"
           gap={10}
-          color={theme.palette.text.secondary}
+          color={'#A5FFBE'}
           sx={{
             '& img': {
               cursor: 'pointer'
@@ -110,6 +110,7 @@ export default function AccountDetails({
           alignItems="center"
           width="100%"
           justifyContent="center"
+          color={'#fff'}
           id="web3-account-identifier-row"
         >
           {connector && <Dot />}
@@ -119,7 +120,9 @@ export default function AccountDetails({
         <Box display="flex" justifyContent="center" width="100%" color={theme.palette.text.secondary}>
           {account && (
             <Copy toCopy={account}>
-              <Typography variant="body2">Copy Address</Typography>
+              <Typography variant="body2" color={'#fff'}>
+                Copy Address
+              </Typography>
             </Copy>
           )}
         </Box>
@@ -152,19 +155,32 @@ export default function AccountDetails({
         {!!pendingTransactions.length || !!confirmedTransactions.length ? (
           <Box display="grid" gap="16px" width="100%">
             <Box display="flex" justifyContent="space-between" width="100%" fontWeight={500}>
-              <Typography variant="inherit">Recent Transactions</Typography>
-              <Button variant="text" onClick={clearAllTransactionsCallback}>
+              <Typography variant="inherit" color={'#A5FFBE'}>
+                Recent Transactions
+              </Typography>
+              <Button
+                variant="text"
+                sx={{
+                  color: '#A5FFBE'
+                }}
+                onClick={clearAllTransactionsCallback}
+              >
                 (clear all)
               </Button>
             </Box>
-            <Box display="grid">
+            <Box
+              display="grid"
+              sx={{
+                color: '#A5FFBE'
+              }}
+            >
               {renderTransactions(pendingTransactions)}
               {renderTransactions(confirmedTransactions)}
             </Box>
           </Box>
         ) : (
           <Box display="flex" width="100%" justifyContent="center" marginTop={1}>
-            <Typography> Your transactions will appear here...</Typography>
+            <Typography color={'#A5FFBE'}> Your transactions will appear here...</Typography>
           </Box>
         )}
       </OutlinedCard>

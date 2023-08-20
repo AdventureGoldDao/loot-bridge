@@ -233,8 +233,12 @@ export default function Bridge() {
         showModal(
           <MessageBox type="success">
             <>
-              <Typography fontSize={22}>{'Transaction confirmed' || 'Transaction success'}</Typography>
-              <Typography>The NFT is expected to be received on the target chain in a few minutes</Typography>
+              <Typography fontSize={22} color={'#A5FFBE'}>
+                {'Transaction confirmed' || 'Transaction success'}
+              </Typography>
+              <Typography color={'#7A9283'}>
+                The NFT is expected to be received on the target chain in a few minutes
+              </Typography>
             </>
           </MessageBox>
         )

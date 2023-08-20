@@ -63,7 +63,7 @@ export default function Modal(props: Props) {
               width: { xs: 'calc(100vw - 32px)!important', sm: width || 488 },
               maxWidth: maxWidth || 488,
               background: theme => background ?? theme.palette.background.paper,
-              border: hasBorder ? '1px solid rgba(255, 255, 255, 0.2)' : '1px solid transparent',
+              border: hasBorder ? '1px solid #FDFFAC' : '1px solid transparent',
               boxShadow: 'unset',
               padding: 0,
               boxSizing: 'border-box',
