@@ -11,7 +11,7 @@ import { ChainId, ChainList, ChainListMap } from 'constants/chain'
 import { Chain } from 'models/chain'
 import { useTransferNFTCallback } from 'hooks/useTransferNFT'
 import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
-import TransactiontionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
+// import TransactiontionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import { useActiveWeb3React } from 'hooks'
 // import { ApprovalState } from 'hooks/useApproveCallback'
@@ -207,7 +207,7 @@ export default function Bridge() {
   const { showModal, hideModal } = useModal()
   const switchNetwork = useSwitchNetwork()
   const toggleWalletModal = useWalletModalToggle()
-  const balance = useCurrencyBalance(account || '', Currency.getNativeCurrency())
+  const balance = useCurrencyBalance(account || undefined, Currency.getNativeCurrency())
   const { claimSubmitted: isLoading } = useUserHasSubmittedClaim(`${account}_transfer_nft_${dstId}`)
   const handleSwitchNetwork = useCallback(() => {
     setSelectedNft(undefined)
@@ -221,23 +221,33 @@ export default function Bridge() {
     setSelectedNft(undefined)
   }, [account, chainId])
 
-  const transferClick = useCallback(() => {
+  const transferClick = useCallback(async () => {
     if (!account || !dstId || !selectedNft) return
     showModal(<TransacitonPendingModal />)
-    transfer(account, dstId, account, selectedNft.tokenId, account)
-      .then(hash => {
-        hideModal()
-        showModal(<TransactiontionSubmittedModal hash={hash} hideFunc={() => setSelectedNft(undefined)} />)
-      })
-      .catch((err: any) => {
-        hideModal()
+    try {
+      const { hash, transactionReceipt } = await transfer(account, dstId, account, selectedNft.tokenId, account)
+      hideModal()
+      setSelectedNft(undefined)
+      showModal(<TransacitonPendingModal pendingText=" " hash={hash} />)
+      transactionReceipt.then(() => {
         showModal(
-          <MessageBox type="error">
-            {err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
+          <MessageBox type="success">
+            <>
+              <Typography fontSize={22}>{'Transaction confirmed' || 'Transaction success'}</Typography>
+              <Typography>The NFT is expected to be received on the target chain in a few minutes</Typography>
+            </>
           </MessageBox>
         )
-        console.error(err)
       })
+    } catch (err: any) {
+      hideModal()
+      showModal(
+        <MessageBox type="error">
+          {err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
+        </MessageBox>
+      )
+      console.error(err)
+    }
   }, [account, dstId, hideModal, selectedNft, showModal, transfer])
 
   const toChainList = useMemo(() => {
@@ -297,7 +307,7 @@ export default function Bridge() {
     if (!balance || balance.lessThan('0') || (tFee && balance.lessThan(tFee))) {
       return (
         <Button style={{ height: 50, width: '100%', fontSize: 20 }} disabled>
-          Insufficient Balance
+          Insufficient Gas Fee
         </Button>
       )
     }
@@ -389,7 +399,7 @@ export default function Bridge() {
                           targetElement={<TargetElement chain={fromChain} />}
                         >
                           <>
-                            {fromChainList.map(option => (
+                            {fromChainList?.map(option => (
                               <MenuItem
                                 onClick={() => {
                                   switchNetwork(option.id)
@@ -450,7 +460,7 @@ export default function Bridge() {
                           targetElement={<TargetElement chain={toChain} />}
                         >
                           <>
-                            {toChainList.map(option => (
+                            {toChainList?.map(option => (
                               <MenuItem
                                 onClick={() => {
                                   setToChain(ChainListMap[option.id] ?? null)

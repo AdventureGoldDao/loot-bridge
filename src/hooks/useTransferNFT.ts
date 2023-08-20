@@ -1,4 +1,4 @@
-import { TransactionResponse } from '@ethersproject/providers'
+import { TransactionResponse, TransactionReceipt } from '@ethersproject/providers'
 import { useCallback } from 'react'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useActiveWeb3React } from '.'
@@ -36,7 +36,16 @@ export function useTransferNFTCallback(dstChainId: number, selectedNft: UserNFTC
   ).result
 
   const run = useCallback(
-    async (fromAddr: string, dstChainId: number, toAddr: string, tokenId: number, refundAddr: string) => {
+    async (
+      fromAddr: string,
+      dstChainId: number,
+      toAddr: string,
+      tokenId: number,
+      refundAddr: string
+    ): Promise<{
+      hash: string
+      transactionReceipt: Promise<TransactionReceipt>
+    }> => {
       if (!account) throw new Error('none account')
       if (!contract) throw new Error('none contract')
 
@@ -70,7 +79,11 @@ export function useTransferNFTCallback(dstChainId: number, selectedNft: UserNFTC
             summary: `Transfer a NFT`,
             claim: { recipient: `${account}_transfer_nft_${dstChainId}` }
           })
-          return response.hash
+          return {
+            tFee,
+            hash: response.hash,
+            transactionReceipt: response.wait(1)
+          }
         })
         .catch((err: any) => {
           if (err.code !== 4001) {
@@ -86,7 +99,6 @@ export function useTransferNFTCallback(dstChainId: number, selectedNft: UserNFTC
     },
     [account, contract, tFee, gasPriceInfoCallback, addTransaction]
   )
-
   return {
     run,
     tFee: tFee?.nativeFee ? CurrencyAmount.ether(tFee?.nativeFee.toString()) : undefined
