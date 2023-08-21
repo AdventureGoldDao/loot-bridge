@@ -71,7 +71,7 @@ export default function App() {
                   {/* <Route path={routes.HOME} element={<Home />} /> */}
                   <Route path={routes.BRIDGE} element={<Bridge />} />
                   {/* <Route path={routes.EXPLORER} element={<Explorer />} /> */}
-                  <Route path="/" element={<Navigate to={routes.BRIDGE} replace />} />
+                  <Route path="*" element={<Navigate to={routes.BRIDGE} replace />} />
                 </Routes>
               </Web3ReactManager>
             </BodyWrapper>

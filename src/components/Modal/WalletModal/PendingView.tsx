@@ -1,9 +1,10 @@
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import React from 'react'
-import { Box, useTheme, Button } from '@mui/material'
+import { Box, useTheme } from '@mui/material'
 import { ReactComponent as CrossCircle } from 'assets/componentsIcon/statusIcon/error_icon.svg'
 import { OutlinedCard } from 'components/Card'
 import Spinner from 'components/Spinner'
+import Button from 'components/Button/ActionButton'
 
 export default function PendingView({
   connector,
@@ -25,7 +26,7 @@ export default function PendingView({
       {error ? (
         <Box display="grid" justifyItems="center" gap="16px" width="100%">
           <CrossCircle />
-          <span>Error connecting. Please try again</span>
+          <span style={{ color: '#A5FFBE' }}>Error connecting. Please try again</span>
         </Box>
       ) : (
         <>
@@ -39,11 +40,13 @@ export default function PendingView({
       )}
 
       {error && (
-        <Box display="flex" gap="10px" width="100%">
+        <Box display="flex" gap="10px" width="100%" justifyContent={'space-between'}>
           {children}
           {error && (
             <Button
-              onClick={() => {
+              width="50%"
+              height="50px"
+              onAction={() => {
                 setPendingError(false)
                 connector && tryActivation(connector)
               }}

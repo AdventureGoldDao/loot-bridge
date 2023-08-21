@@ -3,7 +3,7 @@ import { AbstractConnector } from '@web3-react/abstract-connector'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 import { isMobile } from 'react-device-detect'
-import { Typography, Box } from '@mui/material'
+import { Typography, Box, Button as MuiButton } from '@mui/material'
 import MetamaskIcon from 'assets/walletIcon/metamask.png'
 import { /*fortmatic,*/ injected, portis } from 'connectors'
 // import { OVERLAY_READY } from 'connectors/Fortmatic'
@@ -281,14 +281,28 @@ export default function WalletModal({
             setPendingError={setPendingError}
             tryActivation={tryActivation}
           >
-            <Button
-              onAction={() => {
+            <MuiButton
+              sx={{
+                fontSize: 20,
+                fontWeight: 700,
+                width: '50%',
+                height: '50px',
+                backgroundColor: 'transparent',
+                border: '1px solid #7A9283',
+                color: '#7A9283',
+                '&:hover': {
+                  backgroundColor: 'transparent',
+                  borderColor: '#A5FFBE',
+                  color: '#A5FFBE'
+                }
+              }}
+              onClick={() => {
                 setPendingError(false)
                 setWalletView(WALLET_VIEWS.ACCOUNT)
               }}
             >
               Change Wallet
-            </Button>
+            </MuiButton>
           </PendingView>
         ) : (
           <Box display="grid" gap="10px" width="100%" justifyContent="center">
