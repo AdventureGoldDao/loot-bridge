@@ -8,8 +8,8 @@ import { CloseIcon } from 'theme/components'
 export const Popup = styled('div')(({ theme }) => ({
   display: 'inlineBlock',
   width: '100%',
-  backgroundColor: theme.palette.background.paper,
-  border: '1px solid ' + theme.palette.primary.main,
+  backgroundColor: '#1B1F1C',
+  border: '1px solid #FDFFAC',
   position: 'relative',
   borderRadius: '4px',
   padding: '20px',

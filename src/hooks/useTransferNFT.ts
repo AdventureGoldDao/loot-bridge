@@ -139,7 +139,7 @@ export function useTransferNFTHistoryList(account: string) {
     async () => {
       const res = await getUserTransferNFTHistoryList(account)
       return {
-        list: res.data.data
+        list: res.data.data.sort((a: any, b: any) => b.timestamp - a.timestamp)
       }
     },
     {

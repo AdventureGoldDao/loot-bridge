@@ -38,7 +38,7 @@ function Row(props: { row: Props; onClick: () => void }) {
         </TableCell>
         <TableCell align="center">
           <Typography color={'#A5FFBE'}>
-            {moment(Number(row.timestamp) * 1000).format('YYYY-MM-DD HH:MM:SS')}
+            {moment(Number(row.timestamp) * 1000).format('YYYY-MM-DD HH:mm:ss')}
           </Typography>
         </TableCell>
       </TableRow>
