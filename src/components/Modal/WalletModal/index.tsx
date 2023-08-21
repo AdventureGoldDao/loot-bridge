@@ -3,7 +3,7 @@ import { AbstractConnector } from '@web3-react/abstract-connector'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 import { isMobile } from 'react-device-detect'
-import { Typography, Box, Button } from '@mui/material'
+import { Typography, Box } from '@mui/material'
 import MetamaskIcon from 'assets/walletIcon/metamask.png'
 import { /*fortmatic,*/ injected, portis } from 'connectors'
 // import { OVERLAY_READY } from 'connectors/Fortmatic'
@@ -19,6 +19,7 @@ import PendingView from './PendingView'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { ChainId, NETWORK_CHAIN_ID, SUPPORTED_NETWORKS } from '../../../constants/chain'
 import { setInjectedConnected } from 'utils/isInjectedConnectedPrev'
+import Button from 'components/Button/ActionButton'
 
 const WALLET_VIEWS = {
   OPTIONS: 'options',
@@ -223,7 +224,8 @@ export default function WalletModal({
           </Box>
           {window.ethereum && window.ethereum.isMetaMask && (
             <Button
-              onClick={() => {
+              width="100%"
+              onAction={() => {
                 const id = Object.values(ChainId).find(val => val === NETWORK_CHAIN_ID)
                 if (!id) {
                   return
@@ -280,13 +282,10 @@ export default function WalletModal({
             tryActivation={tryActivation}
           >
             <Button
-              variant="outlined"
-              color="primary"
-              onClick={() => {
+              onAction={() => {
                 setPendingError(false)
                 setWalletView(WALLET_VIEWS.ACCOUNT)
               }}
-              style={{ whiteSpace: 'nowrap' }}
             >
               Change Wallet
             </Button>

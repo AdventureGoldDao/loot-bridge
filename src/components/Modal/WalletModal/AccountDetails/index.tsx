@@ -8,6 +8,7 @@ import { shortenAddress } from 'utils/'
 import Copy from 'components/essential/Copy'
 import DisconnectIcon from 'assets/svg/disconnect.svg'
 import Image from 'components/Image'
+import ActionButton from 'components/Button/ActionButton'
 import Transaction from './Transaction'
 import { SUPPORTED_WALLETS } from 'constants/index'
 import { injected, walletlink } from 'connectors/'
@@ -132,6 +133,7 @@ export default function AccountDetails({
           variant="outlined"
           onClick={toggleWalletModal}
           sx={{
+            width: '50%',
             color: '#7A9283',
             borderColor: '#7A9283',
             fontWeight: 600
@@ -139,17 +141,15 @@ export default function AccountDetails({
         >
           Close
         </Button>
-        <Button
-          sx={{
-            fontWeight: 600,
-            backgroundColor: '#A5FFBE'
-          }}
-          onClick={() => {
+        <ActionButton
+          height="60px"
+          width="50%"
+          onAction={() => {
             openOptions()
           }}
         >
           Change
-        </Button>
+        </ActionButton>
       </Box>
       <OutlinedCard width="100%" padding="20px">
         {!!pendingTransactions.length || !!confirmedTransactions.length ? (

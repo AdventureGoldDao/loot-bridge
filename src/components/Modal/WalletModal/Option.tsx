@@ -51,7 +51,7 @@ export default function Option({
             <div />
           </GreenCircle>
         ) : null}
-        <LogoText logo={icon} text={header} />
+        <LogoText logo={icon} text={header} color="#7A9283" />
       </Button>
     </>
   )
