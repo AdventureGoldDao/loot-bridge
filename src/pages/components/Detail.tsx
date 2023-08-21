@@ -135,7 +135,7 @@ export default function Detail({
             Timestamp
           </Typography>
           <Typography color={'#ebebeb'} fontWeight={500} fontSize={16}>
-            {moment(detailData?.timestamp * 1000).format('YYYY-MM-DD HH:MM:SS')}
+            {moment(detailData?.timestamp * 1000).format('YYYY-MM-DD HH:mm:ss')}
           </Typography>
         </Stack>
       </Box>

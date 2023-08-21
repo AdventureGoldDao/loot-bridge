@@ -163,16 +163,22 @@ export default function TxHistory({
                 <Box
                   sx={{
                     width: '100%',
+                    height: 390,
                     position: 'absolute',
                     top: '50%',
-                    color: '#7FB093',
-                    fontWeight: 600,
-                    fontSize: 18,
                     textAlign: 'center',
-                    backgroundColor: '#1a1e1b'
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: '#1a1e1b',
+                    '& p': {
+                      color: '#7FB093',
+                      fontWeight: 600,
+                      fontSize: 18
+                    }
                   }}
                 >
-                  No Data
+                  <Typography>No Data</Typography>
                 </Box>
               ) : (
                 ''
