@@ -345,7 +345,7 @@ export default function Bridge() {
               fontWeight={active === TabState.BRIDGE ? 700 : 600}
               color={active === TabState.BRIDGE ? '#A5FFBE' : '#7FB093'}
             >
-              Bridge
+              Transfer
             </Typography>
           </Box>
           <Box width={1} height={26} sx={{ backgroundColor: '#3C5141' }}></Box>
@@ -434,7 +434,7 @@ export default function Bridge() {
                         cursor: 'pointer',
                         top: '35%',
                         left: '50%',
-                        transform: 'translate(-50%, -50%)'
+                        transform: 'translate(-50%, -50%) rotate(90deg)'
                       }}
                       onClick={handleSwitchNetwork}
                     >

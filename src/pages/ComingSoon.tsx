@@ -6,20 +6,28 @@ width: calc(100% - 40px);
 max-width: 500px;
 margin: 20px;
 height: 280px;
-border: 1px solid rgba(255, 255, 255, 0.2);
 box-sizing: border-box;
 border-radius: 32px;
 display: flex;
 flex-direction: column;
 align-items: center;
 justify-content: center;
-background-color: #ffffff;
+background-color: transparent;
 `)
 
 const Title = styled('p')(`
+  color: #A5FFBE;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 24px;
+`)
+
+const SubTitle = styled('p')(`
+  margin: 0;
+  color: #7A9283;
   font-weight: 500;
-  font-size: 24px;
-  line-height: 88.69%;
+  font-size: 16px;
+  line-height: 24px;
 `)
 
 export default function ComingSoon() {
@@ -28,8 +36,8 @@ export default function ComingSoon() {
       <Title>
         Coming Soon <Dots />
       </Title>
-      <div>This section is still implemeting.</div>
-      <div>Please come back later</div>
+      <SubTitle>This section is still implemeting.</SubTitle>
+      <SubTitle>Please come back later</SubTitle>
     </Frame>
   )
 }
