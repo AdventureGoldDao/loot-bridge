@@ -161,7 +161,7 @@ export default function Collection({
               <Stack>
                 <Image src={option.imageUri || ''} width={44} style={{ borderRadius: '50%' }} />
                 <Typography ml={10} color={'#A5FFBE'} fontSize={20} fontWeight={600}>
-                  {option.name}
+                  {option.name} #{option.tokenId}
                 </Typography>
               </Stack>
               <Typography fontSize={16} fontWeight={600} color={'#A5FFBE'}>
@@ -177,7 +177,8 @@ export default function Collection({
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              color: '#fff',
+              color: '#A5FFBE',
+              fontWeight: 700,
               fontSize: 20,
               lineHeight: '150%'
             }}

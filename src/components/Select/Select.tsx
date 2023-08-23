@@ -18,6 +18,7 @@ interface Props {
   label?: string
   renderValue?: any
   style?: React.CSSProperties | SxProps<Theme>
+  menuProps?: React.CSSProperties | SxProps<Theme>
 }
 
 const StyledInputLabel = styled(MuiInputLabel)(({ theme }) => ({
@@ -113,17 +114,21 @@ export default function Select(props: Props) {
             '& .MuiPaper-root': {
               width: width ?? 'unset',
               borderRadius: '10px',
+              border: '1px solid #FDFFAC',
+              backgroundColor: '#2C353D',
               mt: '10px',
               boxShadow: theme => theme.shadows[4],
               transform: width ? 'translateX(-12px)!important' : 'none',
               '& li': {
                 fontSize: 16,
+                fontWeight: 600,
+                color: '#A5FFBE',
                 borderBottom: '1px solid rgba(0,0,0,0.1)',
                 display: 'flex',
                 alignItems: 'center',
                 padding: '12px 0',
                 '&.Mui-selected': {
-                  backgroundColor: 'transparent'
+                  backgroundColor: 'rgba(0, 0, 0, 0.30)'
                 }
               },
               '& li:last-child': {

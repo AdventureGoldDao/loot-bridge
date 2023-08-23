@@ -26,7 +26,7 @@ export default function TransactionPopup({
             <ReportGmailerrorredOutlinedIcon color="error" height={20} width={20} />
           )}
         </div>
-        <Typography variant="inherit" color={'#A5FFBE'}>
+        <Typography variant="inherit" color={'#fff'} fontSize={20}>
           {summary ? summary : hash ? 'Hash: ' + hash.slice(0, 8) + '...' + hash.slice(58, 65) : '-'}
         </Typography>{' '}
       </Box>
@@ -34,7 +34,7 @@ export default function TransactionPopup({
         <ExternalLink
           underline="always"
           href={getEtherscanLink(chainId ? chainId : 1, hash, 'transaction')}
-          style={{ margin: '9px 32px' }}
+          style={{ margin: '9px 32px', color: '#7A9283' }}
         >
           View on explorer
         </ExternalLink>

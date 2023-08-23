@@ -1,7 +1,8 @@
 import React, { HTMLProps, useCallback } from 'react'
-import MuiCloseIcon from '@mui/icons-material/Close'
+import MuiCloseIcon from 'assets/svg/close.svg'
 import { Link, IconButton, keyframes, styled, Theme } from '@mui/material'
 import { SxProps } from '@mui/system'
+import Image from 'components/Image'
 
 export function CloseIcon({ onClick }: { onClick?: () => void }) {
   return (
@@ -13,12 +14,13 @@ export function CloseIcon({ onClick }: { onClick?: () => void }) {
         position: 'absolute',
         top: '24px',
         right: '24px',
-        '&:hover $closeIcon': {
-          color: theme => theme.palette.text.primary
+        '& img': {
+          width: 26,
+          height: 26
         }
       }}
     >
-      <MuiCloseIcon sx={{ color: theme => theme.palette.grey[500] }} />
+      <Image src={MuiCloseIcon} />
     </IconButton>
   )
 }

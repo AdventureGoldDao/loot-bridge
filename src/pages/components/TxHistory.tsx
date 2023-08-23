@@ -60,7 +60,7 @@ export default function TxHistory({
   const [tableIndex, setTableIndex] = useState(-1)
   const { account } = useActiveWeb3React()
   const { data: historyList } = useTransferNFTHistoryList(account || '')
-  console.log(isEnteredDetail, tableIndex)
+  console.log('history', isEnteredDetail, tableIndex, historyList?.list)
   const handleClick = useCallback((index: number) => {
     setTableIndex(index)
   }, [])
@@ -151,7 +151,7 @@ export default function TxHistory({
             >
               {historyList?.list?.map((row: any, index: number) => (
                 <Row
-                  key={row.txHash + index}
+                  key={row.timestamp + index}
                   row={row}
                   onClick={() => {
                     handleClick(index)

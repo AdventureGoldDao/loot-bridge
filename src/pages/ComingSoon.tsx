@@ -36,7 +36,7 @@ export default function ComingSoon() {
       <Title>
         Coming Soon <Dots />
       </Title>
-      <SubTitle>This section is still implemeting.</SubTitle>
+      <SubTitle>This section is still implemeting</SubTitle>
       <SubTitle>Please come back later</SubTitle>
     </Frame>
   )

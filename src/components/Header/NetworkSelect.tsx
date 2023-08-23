@@ -23,15 +23,21 @@ export default function NetworkSelect() {
         height={isDownSm ? '24px' : '36px'}
         style={{
           background: 'rgba(165, 255, 190, 0.1)',
-          border: '1px solid rgba(0, 0, 0, 0.1)',
+          // border: '1px solid #FDFFAC',
           color: '#fff',
           '& .Mui-disabled.MuiSelect-select.MuiInputBase-input': {
             paddingRight: isDownSm ? 0 : 10,
             color: theme => theme.palette.text.primary,
             WebkitTextFillColor: theme => theme.palette.text.primary
           },
+          '&:hover': {
+            backgroundColor: 'rgba(165, 255, 190, 0.1)'
+          },
+          '&.Mui-focused': {
+            borderColor: '#FDFFAC'
+          },
           '& .MuiSelect-icon path': {
-            fill: 'rgb(165, 255, 190)'
+            fill: '#A5FFBE'
           }
         }}
       >

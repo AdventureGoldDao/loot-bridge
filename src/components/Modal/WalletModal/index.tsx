@@ -215,7 +215,7 @@ export default function WalletModal({
           </Typography>
           <Box padding={isUpToMD ? '16px' : '2rem 6rem 52px'} color={'#7A9283'}>
             {error instanceof UnsupportedChainIdError
-              ? `Please connect to the    ${
+              ? `Please connect to    ${
                   SUPPORTED_NETWORKS[NETWORK_CHAIN_ID]
                     ? SUPPORTED_NETWORKS[NETWORK_CHAIN_ID]?.chainName
                     : 'Binance Smart Chain'
