@@ -37,7 +37,8 @@ export enum ChainId {
   AVALANCHE = 43114,
   MUMBAI_POLYGON = 80001,
   SEPOLIA = 11155111,
-  LOOT = 9088912,
+  LOOT_TESTNET = 9088912,
+  LOOT = 5151706,
   AUROEA = 1313161554,
   HARMONY = 1666600000,
   PALM = 11297108109
@@ -388,7 +389,7 @@ export const SUPPORTED_NETWORKS: {
       decimals: 18,
       logo: EthUrl
     },
-    rpcUrls: ['https://sepolia.infura.io/v3/'],
+    rpcUrls: ['https://eth-sepolia.public.blastapi.io/'],
     blockExplorerUrls: ['https://sepolia.etherscan.io/']
   },
   [ChainId.LOOT]: {
@@ -403,6 +404,19 @@ export const SUPPORTED_NETWORKS: {
     },
     rpcUrls: ['https://rpc.lootchain.com/http'],
     blockExplorerUrls: ['https://explorer.lootchain.com/']
+  },
+  [ChainId.LOOT_TESTNET]: {
+    id: ChainId.LOOT_TESTNET,
+    hexChainId: numberToHex(ChainId.LOOT_TESTNET),
+    chainName: 'Loot Chain Testnet',
+    nativeCurrency: {
+      name: 'AGLD',
+      symbol: 'AGLD',
+      decimals: 18,
+      logo: LootUrl
+    },
+    rpcUrls: ['https://testnet.rpc.lootchain.com/http'],
+    blockExplorerUrls: ['https://testnet.explorer.lootchain.com/']
   },
   [ChainId.AUROEA]: {
     id: ChainId.AUROEA,

@@ -136,8 +136,12 @@ export interface UserNFTCollection {
 }
 
 const BackedChainId: { [k: number]: number } = {
+  [ChainId.MAINNET]: 101,
+  [ChainId.LOOT]: 197,
   [ChainId.BSCTEST]: 10102,
-  [ChainId.MUMBAI_POLYGON]: 10109
+  [ChainId.MUMBAI_POLYGON]: 10109,
+  [ChainId.LOOT_TESTNET]: 10197,
+  [ChainId.SEPOLIA]: 10161
 }
 
 function TargetElement({ chain }: { chain: Chain | null }) {
@@ -161,7 +165,7 @@ function TargetElement({ chain }: { chain: Chain | null }) {
     >
       <Stack direction={'row'} spacing={19} alignItems={'center'}>
         <Image width={40} height={40} src={chain?.logo || Logo} />
-        <Typography>{chain?.symbol || 'AGLD'}</Typography>
+        <Typography>{chain?.name || 'AGLD'}</Typography>
       </Stack>
       <ArrowIcon />
     </Box>
@@ -196,8 +200,8 @@ function ActionButtonGroup({
 export default function Bridge() {
   const { account, chainId } = useActiveWeb3React()
   const [selectedNft, setSelectedNft] = useState<UserNFTCollection>()
-  const [fromChain, setFromChain] = useState<Chain | null>(ChainListMap[ChainId.BSCTEST] ?? null)
-  const [toChain, setToChain] = useState<Chain | null>(ChainListMap[ChainId.MUMBAI_POLYGON] ?? null)
+  const [fromChain, setFromChain] = useState<Chain | null>(ChainListMap[ChainId.SEPOLIA] ?? null)
+  const [toChain, setToChain] = useState<Chain | null>(ChainListMap[ChainId.LOOT_TESTNET] ?? null)
   const [active, setActive] = useState(TabState.BRIDGE)
   const [action, setAction] = useState(ActionType.WITHDRAW)
   const [isEnteredDetail, setIsEnteredDetail] = useState(false)
@@ -207,7 +211,7 @@ export default function Bridge() {
   const { showModal, hideModal } = useModal()
   const switchNetwork = useSwitchNetwork()
   const toggleWalletModal = useWalletModalToggle()
-  const balance = useCurrencyBalance(account || undefined, Currency.getNativeCurrency())
+  const balance = useCurrencyBalance(account || undefined, Currency.getNativeCurrency(fromChain?.id || undefined))
   const { claimSubmitted: isLoading } = useUserHasSubmittedClaim(`${account}_transfer_nft_${dstId}`)
   const handleSwitchNetwork = useCallback(() => {
     setSelectedNft(undefined)
@@ -215,7 +219,7 @@ export default function Bridge() {
     setToChain(fromChain)
   }, [fromChain, toChain])
 
-  console.log(isLoading, selectedNft)
+  console.log(isLoading, selectedNft, balance?.toSignificant())
 
   useEffect(() => {
     setSelectedNft(undefined)
@@ -262,11 +266,6 @@ export default function Bridge() {
     return ChainList.filter(chain => !(chain.id === toChain?.id))
   }, [toChain?.id])
 
-  // const [approveState, approveCallback] = useNFTApproveAllCallback(
-  //   NFT_CONTRACT_ADDRESS[chainId as ChainId],
-  //   chainId ? TRANSFER_NFT_ADDRESS[chainId as ChainId] : undefined
-  // )
-
   const ActionButtonNode = useMemo(() => {
     if (!account) {
       return (
@@ -275,23 +274,7 @@ export default function Bridge() {
         </Button>
       )
     }
-    // if (approveState !== ApprovalState.APPROVED && selectedNft) {
-    //   if (approveState === ApprovalState.PENDING) {
-    //     return (
-    //       <Button style={{ height: 50, width: '100%', fontSize: 20 }}>Approving use of {fromChain?.name} NFT...</Button>
-    //     )
-    //   }
-    //   if (approveState === ApprovalState.UNKNOWN) {
-    //     return <Button style={{ height: 50, width: '100%', fontSize: 20 }}>Loading...</Button>
-    //   }
-    //   if (approveState === ApprovalState.NOT_APPROVED) {
-    //     return (
-    //       <Button style={{ height: 50, width: '100%', fontSize: 20 }} onClick={approveCallback}>
-    //         Approve use of {fromChain?.name} NFT
-    //       </Button>
-    //     )
-    //   }
-    // }
+
     if (chainId !== fromChain?.id)
       return (
         <Button
@@ -315,7 +298,7 @@ export default function Bridge() {
         </Button>
       )
     }
-    return <ActionButton width="100%" height="50px" onAction={transferClick} actionText="Bridge" />
+    return <ActionButton width="100%" height="50px" onAction={transferClick} actionText="Transfer" />
   }, [account, balance, chainId, fromChain?.id, selectedNft, switchNetwork, tFee, toggleWalletModal, transferClick])
 
   return (

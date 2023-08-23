@@ -22,6 +22,7 @@ export default function Collection({
   const { data: tokenNFTList } = useUserOwnedNFTList(account || '', fromChain?.id || 1)
   const [collection, setCollection] = useState<any>()
   const { data: nftList } = useGetNFTDetail(account || '', fromChain?.id || 1, collection?.nftAddress || '')
+  console.log('🚀 ~ file: Collection.tsx:23 ~ tokenNFTList:', nftList?.list)
 
   useEffect(() => {
     !collection && setCollection(tokenNFTList?.list?.[0])
@@ -82,9 +83,9 @@ export default function Collection({
         }
       >
         <>
-          {tokenNFTList?.list?.map((option: any) => (
+          {tokenNFTList?.list?.map((option: any, index: number) => (
             <Box
-              key={option.tokenAddress}
+              key={option.id + index}
               sx={{
                 color: '#7fb093',
                 fontSize: 16,
