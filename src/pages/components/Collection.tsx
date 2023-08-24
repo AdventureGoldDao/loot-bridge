@@ -76,7 +76,7 @@ export default function Collection({
             }}
           >
             <Stack direction={'row'} spacing={19} alignItems={'center'}>
-              <Typography>{collection ? 'Loot' : 'Select a Collection'}</Typography>
+              <Typography>{collection ? 'Loot(for Adventurers)' : 'Select a Collection'}</Typography>
             </Stack>
             <ArrowIcon />
           </Box>
@@ -99,7 +99,7 @@ export default function Collection({
               }}
               onClick={() => setCollection(option)}
             >
-              Loot
+              Loot(for Adventurers)
             </Box>
           ))}
           {tokenNFTList?.list?.length === 0 && (
