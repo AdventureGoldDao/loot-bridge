@@ -11,7 +11,7 @@ import { ModalProvider } from 'context/ModalContext'
 import { routes } from 'constants/routes'
 // import Home from './Home'
 // import Explorer from './Explorer'
-// import Footer from 'components/Footer'
+import Footer from 'components/Footer'
 import BG from 'assets/images/home-bg.png'
 import Bridge from './Bridge'
 
@@ -75,7 +75,7 @@ export default function App() {
                 </Routes>
               </Web3ReactManager>
             </BodyWrapper>
-            {/* <Footer /> */}
+            <Footer />
           </ContentWrapper>
         </AppWrapper>
       </ModalProvider>{' '}
