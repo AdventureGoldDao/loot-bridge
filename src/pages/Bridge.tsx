@@ -229,8 +229,8 @@ export default function Bridge() {
   }, [account, chainId])
 
   const [approveState, approveCallback] = useNFTApproveAllCallback(
-    TRANSFER_NFT_ADDRESS[chainId as ChainId],
-    '0x341dC75Ae3074f1eBf053fd7Ae5b92A57634cD3A'
+    '0xFF9C1b15B16263C61d017ee9F65C50e4AE0113D7',
+    TRANSFER_NFT_ADDRESS[chainId as ChainId]
   )
 
   const transferClick = useCallback(async () => {
