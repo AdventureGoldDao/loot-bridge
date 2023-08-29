@@ -28,6 +28,9 @@ import PopperCard from './components/PopperCard'
 import Collection from './components/Collection'
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import { Currency } from 'constants/token'
+import { ApprovalState } from 'hooks/useApproveCallback'
+import { useNFTApproveAllCallback } from 'hooks/useNFTApproveAllCallback'
+import { TRANSFER_NFT_ADDRESS } from '../constants'
 
 export const ControllBtn = styled(Box)({
   width: '100%',
@@ -200,8 +203,8 @@ function ActionButtonGroup({
 export default function Bridge() {
   const { account, chainId } = useActiveWeb3React()
   const [selectedNft, setSelectedNft] = useState<UserNFTCollection>()
-  const [fromChain, setFromChain] = useState<Chain | null>(ChainListMap[ChainId.SEPOLIA] ?? null)
-  const [toChain, setToChain] = useState<Chain | null>(ChainListMap[ChainId.LOOT_TESTNET] ?? null)
+  const [fromChain, setFromChain] = useState<Chain | null>(ChainListMap[ChainId.MAINNET] ?? null)
+  const [toChain, setToChain] = useState<Chain | null>(ChainListMap[ChainId.LOOT] ?? null)
   const [active, setActive] = useState(TabState.BRIDGE)
   const [action, setAction] = useState(ActionType.WITHDRAW)
   const [isEnteredDetail, setIsEnteredDetail] = useState(false)
@@ -224,6 +227,11 @@ export default function Bridge() {
   useEffect(() => {
     setSelectedNft(undefined)
   }, [account, chainId])
+
+  const [approveState, approveCallback] = useNFTApproveAllCallback(
+    TRANSFER_NFT_ADDRESS[chainId as ChainId],
+    '0x341dC75Ae3074f1eBf053fd7Ae5b92A57634cD3A'
+  )
 
   const transferClick = useCallback(async () => {
     if (!account || !dstId || !selectedNft) return
@@ -291,6 +299,23 @@ export default function Bridge() {
         </Button>
       )
     }
+    if (approveState !== ApprovalState.APPROVED && fromChain?.id === 1) {
+      if (approveState === ApprovalState.PENDING) {
+        return (
+          <Button style={{ height: 50, width: '100%', fontSize: 20 }}>Approving use of {fromChain?.name} NFT...</Button>
+        )
+      }
+      if (approveState === ApprovalState.UNKNOWN) {
+        return <Button style={{ height: 50, width: '100%', fontSize: 20 }}>Loading...</Button>
+      }
+      if (approveState === ApprovalState.NOT_APPROVED) {
+        return (
+          <Button style={{ height: 50, width: '100%', fontSize: 20 }} onClick={approveCallback}>
+            Approve use of {fromChain?.name} NFT
+          </Button>
+        )
+      }
+    }
     if (!balance || balance.lessThan('0') || (tFee && balance.lessThan(tFee))) {
       return (
         <Button style={{ height: 50, width: '100%', fontSize: 20 }} disabled>
@@ -299,7 +324,20 @@ export default function Bridge() {
       )
     }
     return <ActionButton width="100%" height="50px" onAction={transferClick} actionText="Transfer" />
-  }, [account, balance, chainId, fromChain?.id, selectedNft, switchNetwork, tFee, toggleWalletModal, transferClick])
+  }, [
+    account,
+    approveCallback,
+    approveState,
+    balance,
+    chainId,
+    fromChain?.id,
+    fromChain?.name,
+    selectedNft,
+    switchNetwork,
+    tFee,
+    toggleWalletModal,
+    transferClick
+  ])
 
   return (
     <>
