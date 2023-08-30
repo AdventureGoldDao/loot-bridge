@@ -1,5 +1,4 @@
 import { Stack, Typography } from '@mui/material'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 
 export default function V1Link() {
   return (
@@ -24,7 +23,6 @@ export default function V1Link() {
       <Typography fontSize={14} fontWeight={700} color={'#A5FFBE'}>
         V1
       </Typography>
-      <ExpandMoreIcon />
     </Stack>
   )
 }
