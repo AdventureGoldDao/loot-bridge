@@ -11,6 +11,7 @@ import { routes } from 'constants/routes'
 import MobileMenu from './MobileMenu'
 import NetworkSelect from './NetworkSelect'
 import Icon from 'assets/svg/arrow.svg'
+import V1Link from './V1Link'
 
 interface TabContent {
   title: string
@@ -233,6 +234,7 @@ export default function Header() {
           <></>
         ) : (
           <Box display="flex" alignItems="center" gap={{ xs: '6px', sm: '20px' }}>
+            <V1Link />
             <NetworkSelect />
             <Web3Status />
             <ShowOnMobile breakpoint="md">
