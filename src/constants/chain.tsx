@@ -44,6 +44,15 @@ export enum ChainId {
   PALM = 11297108109
 }
 
+export const BackedChainId: { [k: number]: number } = {
+  [ChainId.MAINNET]: 101,
+  [ChainId.LOOT]: 197,
+  [ChainId.BSCTEST]: 10102,
+  [ChainId.MUMBAI_POLYGON]: 10109,
+  [ChainId.LOOT_TESTNET]: 10197,
+  [ChainId.SEPOLIA]: 10161
+}
+
 export const NETWORK_CHAIN_ID: ChainId = process.env.REACT_APP_CHAIN_ID
   ? parseInt(process.env.REACT_APP_CHAIN_ID)
   : ChainId.BSC
