@@ -1,7 +1,20 @@
+import { ChainId } from 'constants/chain'
 import JSBI from 'jsbi'
 
 // exports for external consumption
 export type BigintIsh = JSBI | bigint | string
+
+export interface Token {
+  chainId: ChainId | number | undefined
+  address: string
+  decimals: number
+  symbol?: string
+  logoURI?: string
+  smallUrl?: string
+  balance?: number
+  name?: string
+  dangerous?: boolean
+}
 
 export enum TradeType {
   EXACT_INPUT,

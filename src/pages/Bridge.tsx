@@ -1,10 +1,7 @@
-import { Box, Button as MuiButton, ButtonGroup, Typography, styled, Stack } from '@mui/material'
+import { Box, Button as MuiButton, ButtonGroup, Typography, styled } from '@mui/material'
 import activeIcon from 'assets/svg/diamond.svg'
 import Image from 'components/Image'
 import { useState } from 'react'
-import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
-import Logo from 'assets/images/logo.png'
-import { Chain } from 'models/chain'
 import { useActiveWeb3React } from 'hooks'
 import Button from 'components/Button/Button'
 import ComingSoon from './ComingSoon'
@@ -56,13 +53,13 @@ export const Panel = styled(Box)({
   height: 590
 })
 
-export const FromPanel = styled(Box)({
-  height: 84,
+export const FromPanel = styled(Box)(({ height, bg }: { height?: number; bg?: string }) => ({
+  height: height ?? 84,
   padding: '7px 9px',
   borderRadius: '10px',
   margin: '20px 0',
-  backgroundColor: '#2A312D'
-})
+  backgroundColor: bg ?? '#2A312D'
+}))
 
 export const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
   display: 'grid',
@@ -119,34 +116,6 @@ export interface UserNFTCollection {
   tokenId: number
 }
 
-export function TargetElement({ chain }: { chain: Chain | null }) {
-  return (
-    <Box
-      sx={{
-        height: 70,
-        color: '#A5FFBE',
-        display: 'flex',
-        padding: '10px',
-        cursor: 'pointer',
-        alignItems: 'center',
-        '& svg': {
-          margin: '0 40px 0 auto'
-        },
-        '& p': {
-          color: '#ebebeb',
-          fontSize: 20
-        }
-      }}
-    >
-      <Stack direction={'row'} spacing={19} alignItems={'center'}>
-        <Image width={40} height={40} src={chain?.logo || Logo} />
-        <Typography>{chain?.name || 'AGLD'}</Typography>
-      </Stack>
-      <ArrowIcon />
-    </Box>
-  )
-}
-
 function ActionButtonGroup({
   action,
   setAction
@@ -175,7 +144,7 @@ function ActionButtonGroup({
 export default function Bridge() {
   const { account } = useActiveWeb3React()
   const [active, setActive] = useState(TabState.BRIDGE)
-  const [action, setAction] = useState(ActionType.NO_FUNGIBLE)
+  const [action, setAction] = useState(ActionType.FUNGIBLE)
   const [isEnteredDetail, setIsEnteredDetail] = useState(false)
   const [isEnteredCollection, setIsEnteredCollection] = useState(false)
 

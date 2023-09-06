@@ -1,11 +1,11 @@
 import Collection from '../components/Collection'
-import { Box, MenuItem, Stack, Typography } from '@mui/material'
-import PopperCard from '../components/PopperCard'
+import { Box, Stack, Typography } from '@mui/material'
 import { BackedChainId, ChainId, ChainList, ChainListMap } from '../../constants/chain'
-import LogoText from '../../components/LogoText'
 import Image from '../../components/Image'
 import SwitchIcon from '../../assets/svg/switch.svg'
-import { FromPanel, TargetElement, UserNFTCollection } from '../Bridge'
+import Logo from 'assets/images/logo.png'
+import USDT from '../components/usdt.png'
+import { FromPanel, UserNFTCollection } from '../Bridge'
 import { useCallback, useMemo, useState } from 'react'
 import { Chain } from '../../models/chain'
 import { useSwitchNetwork } from '../../hooks/useSwitchNetwork'
@@ -22,21 +22,38 @@ import { useCurrencyBalance } from '../../state/wallet/hooks'
 import { Currency } from '../../constants/token'
 import useModal from '../../hooks/useModal'
 import { useTransferNFTCallback } from '../../hooks/useTransferNFT'
+import { SelectTokenPanel } from 'pages/components/SelectTokenPanel'
+
+const tokenList = [
+  {
+    name: 'zk',
+    logo: USDT,
+    address: '0xc390E699b38F14dB884C635bbf843f7B135113ad',
+    id: 11155111
+  },
+  {
+    name: 'Doge',
+    logo: Logo,
+    address: '0xf61d4B6607F40Ae7fe8F95a54E11e84c9C75B237',
+    id: 11155111
+  }
+]
 
 export default function Fungible() {
   const switchNetwork = useSwitchNetwork()
   const { account, chainId } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
   const { showModal, hideModal } = useModal()
-
-  const [toChain, setToChain] = useState<Chain | null>(ChainListMap[ChainId.LOOT] ?? null)
+  const [toToken, setToToken] = useState()
+  const [toChain, setToChain] = useState<Chain | null>(ChainListMap[ChainId.LOOT_TESTNET] ?? null)
   const [selectedNft, setSelectedNft] = useState<UserNFTCollection>()
 
   const dstId = useMemo(() => BackedChainId[toChain?.id as number], [toChain])
   const { run: transfer, tFee } = useTransferNFTCallback(dstId, selectedNft !== undefined ? selectedNft : undefined)
 
   const [isEnteredCollection, setIsEnteredCollection] = useState(false)
-  const [fromChain, setFromChain] = useState<Chain | null>(ChainListMap[ChainId.MAINNET] ?? null)
+  const [fromChain, setFromChain] = useState<Chain | null>(ChainListMap[ChainId.SEPOLIA] ?? null)
+  const [fromToken, setFromToken] = useState()
 
   const fromChainList = useMemo(() => {
     return ChainList.filter(chain => !(chain.id === toChain?.id))
@@ -100,8 +117,7 @@ export default function Fungible() {
         </Button>
       )
     }
-
-    if (chainId !== fromChain?.id)
+    if (chainId !== fromChain?.id) {
       return (
         <Button
           style={{ height: 50, width: '100%', fontSize: 20 }}
@@ -110,14 +126,8 @@ export default function Fungible() {
           Switch Network
         </Button>
       )
-    if (!selectedNft) {
-      return (
-        <Button style={{ height: 50, width: '100%', fontSize: 20 }} disabled>
-          Select NFT
-        </Button>
-      )
     }
-    if (approveState !== ApprovalState.APPROVED && fromChain?.id === 1) {
+    if (approveState !== ApprovalState.APPROVED) {
       if (approveState === ApprovalState.PENDING) {
         return (
           <Button style={{ height: 50, width: '100%', fontSize: 20 }}>Approving use of {fromChain?.name} NFT...</Button>
@@ -150,7 +160,6 @@ export default function Fungible() {
     chainId,
     fromChain?.id,
     fromChain?.name,
-    selectedNft,
     switchNetwork,
     tFee,
     toggleWalletModal,
@@ -167,60 +176,24 @@ export default function Fungible() {
         />
       ) : (
         <>
-          <FromPanel>
-            <Box
-              sx={{
-                border: '1px solid #3C5141',
-                borderRadius: '10px',
-                backgroundColor: '#151815'
-              }}
-            >
-              <PopperCard
-                sx={{
-                  width: 530,
-                  marginTop: 13,
-                  maxHeight: '50vh',
-                  overflowY: 'auto',
-                  backgroundColor: '#2C353D',
-                  border: '1px solid #FDFFAC',
-                  '&::-webkit-scrollbar': {
-                    display: 'none'
-                  }
-                }}
-                placement="bottom-start"
-                targetElement={<TargetElement chain={fromChain} />}
-              >
-                <>
-                  {fromChainList?.map(option => (
-                    <MenuItem
-                      onClick={() => {
-                        switchNetwork(option.id)
-                        setFromChain(ChainListMap[option.id] ?? null)
-                      }}
-                      value={option.id}
-                      key={option.id}
-                      selected={chainId === option.id}
-                    >
-                      <LogoText
-                        logo={option.logo}
-                        text={option.name}
-                        gapSize={'large'}
-                        fontSize={16}
-                        fontWeight={600}
-                        color="#A5FFBE"
-                      />
-                    </MenuItem>
-                  ))}
-                </>
-              </PopperCard>
-            </Box>
+          <FromPanel height={145} bg="#000">
+            <SelectTokenPanel
+              chain={fromChain}
+              token={fromToken}
+              chainId={chainId}
+              dirText="From"
+              tokenList={tokenList}
+              chainList={fromChainList}
+              setChain={setFromChain}
+              setToken={setFromToken}
+            />
           </FromPanel>
           <Box
             width={'fit-content'}
             position={'absolute'}
             sx={{
               cursor: 'pointer',
-              top: '35%',
+              top: '44.5%',
               left: '50%',
               transform: 'translate(-50%, -50%) rotate(90deg)'
             }}
@@ -228,102 +201,17 @@ export default function Fungible() {
           >
             <Image width={50} src={SwitchIcon} />
           </Box>
-          <FromPanel>
-            <Box
-              sx={{
-                border: '1px solid #3C5141',
-                borderRadius: '10px',
-                backgroundColor: '#151815'
-              }}
-            >
-              <PopperCard
-                sx={{
-                  width: 530,
-                  marginTop: 13,
-                  maxHeight: '50vh',
-                  overflowY: 'auto',
-                  backgroundColor: '#2C353D',
-                  border: '1px solid #FDFFAC',
-                  '&::-webkit-scrollbar': {
-                    display: 'none'
-                  }
-                }}
-                placement="bottom-start"
-                targetElement={<TargetElement chain={toChain} />}
-              >
-                <>
-                  {toChainList?.map(option => (
-                    <MenuItem
-                      onClick={() => {
-                        setToChain(ChainListMap[option.id] ?? null)
-                      }}
-                      value={option.id}
-                      key={option.id}
-                      selected={chainId === option.id}
-                    >
-                      <LogoText
-                        logo={option.logo}
-                        text={option.name}
-                        gapSize={'large'}
-                        fontSize={16}
-                        fontWeight={600}
-                        color="#A5FFBE"
-                      />
-                    </MenuItem>
-                  ))}
-                </>
-              </PopperCard>
-            </Box>
+          <FromPanel height={145} bg="#000">
+            <SelectTokenPanel
+              chain={toChain}
+              token={toToken}
+              tokenList={tokenList}
+              dirText="To"
+              chainList={toChainList}
+              setChain={setToChain}
+              setToken={setToToken}
+            />
           </FromPanel>
-          {!selectedNft ? (
-            <Stack
-              direction={'row'}
-              sx={{
-                border: '1px solid #4B5954',
-                backgroundColor: '#111211',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: 96,
-                padding: '10px 9px',
-                borderRadius: '12px',
-                cursor: 'pointer',
-                margin: '20px 0',
-                color: '#A5FFBE',
-                fontWeight: 600
-              }}
-              onClick={() => {
-                setIsEnteredCollection(true)
-              }}
-            >
-              + Select NFT
-            </Stack>
-          ) : (
-            <Stack
-              direction={'row'}
-              sx={{
-                border: '1px solid #4B5954',
-                backgroundColor: '#111211',
-                height: 96,
-                cursor: 'pointer',
-                padding: '10px 9px',
-                borderRadius: '12px',
-                margin: '20px 0'
-              }}
-              onClick={() => {
-                setIsEnteredCollection(true)
-              }}
-            >
-              <Image width={76} style={{ borderRadius: '7px' }} src={selectedNft?.imageUri || ''} />
-              <Box ml={34}>
-                <Typography color={'#7A9283'} fontSize={18} fontWeight={500}>
-                  {selectedNft.name}
-                </Typography>
-                <Typography color={'#ebebeb'} fontSize={24} fontWeight={600} mt={8}>
-                  #{selectedNft.tokenId}
-                </Typography>
-              </Box>
-            </Stack>
-          )}
           <Stack
             mb={20}
             direction={'row'}

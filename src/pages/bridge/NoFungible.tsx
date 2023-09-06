@@ -5,7 +5,7 @@ import { BackedChainId, ChainId, ChainList, ChainListMap } from '../../constants
 import LogoText from '../../components/LogoText'
 import Image from '../../components/Image'
 import SwitchIcon from '../../assets/svg/switch.svg'
-import { FromPanel, TargetElement, UserNFTCollection } from '../Bridge'
+import { FromPanel, UserNFTCollection } from '../Bridge'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Chain } from '../../models/chain'
 import { useSwitchNetwork } from '../../hooks/useSwitchNetwork'
@@ -22,6 +22,7 @@ import { useCurrencyBalance } from '../../state/wallet/hooks'
 import { Currency } from '../../constants/token'
 import useModal from '../../hooks/useModal'
 import { useTransferNFTCallback } from '../../hooks/useTransferNFT'
+import { TargetElement } from 'pages/components/SelectTokenPanel'
 
 export default function NoFungible() {
   const switchNetwork = useSwitchNetwork()
