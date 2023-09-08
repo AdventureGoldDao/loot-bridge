@@ -12,7 +12,9 @@ import { useSwitchNetwork } from 'hooks/useSwitchNetwork'
 import { Dispatch, SetStateAction } from 'react'
 import { useActiveWeb3React } from 'hooks'
 import { useCurrencyBalance } from 'state/wallet/hooks'
-import { Currency } from 'constants/token'
+import { Currency, CurrencyAmount } from 'constants/token'
+import { ChainToken, MultiChainToken } from '../bridge/Fungible'
+import { ChainListMap } from '../../constants/chain'
 
 export function TargetElement({ chain }: { chain: Chain | null }) {
   return (
@@ -45,26 +47,35 @@ export function TargetElement({ chain }: { chain: Chain | null }) {
 export function SelectTokenPanel({
   chain,
   token,
+  multiToken,
   chainId,
   dirText,
-  chainList,
-  setChain,
+  setMultiToken,
+  amount,
+  setAmount,
   setToken,
   tokenList
 }: {
-  chain: Chain | null
-  token: any
+  chain: Chain | undefined
+  multiToken: MultiChainToken
+  token: ChainToken
+  amount: CurrencyAmount | undefined
+  setAmount: Dispatch<SetStateAction<CurrencyAmount | undefined>>
   chainId?: number
   dirText: string
-  chainList: Chain[]
-  setChain: Dispatch<SetStateAction<any>>
-  setToken: Dispatch<SetStateAction<any>>
-  tokenList: any[]
+  setMultiToken: (multiChainToken: MultiChainToken) => void
+  setToken: Dispatch<SetStateAction<ChainToken>>
+  tokenList: MultiChainToken[]
 }) {
   const { account } = useActiveWeb3React()
   const switchNetwork = useSwitchNetwork()
-  const tCurrency = new Currency(token?.id, token?.address, 18)
-  const balance = useCurrencyBalance(account || undefined, tCurrency)
+  const tCurrency = new Currency(
+    token.chainId,
+    token.nativeAddress ?? token.contractAddress,
+    token.decimals,
+    multiToken.name
+  )
+  const balance = useCurrencyBalance(account || undefined, tCurrency, token.chainId)
 
   return (
     <Stack
@@ -113,20 +124,20 @@ export function SelectTokenPanel({
             }
           >
             <>
-              {chainList?.map(option => (
+              {multiToken.tokens?.map(option => (
                 <MenuItem
-                  key={option.id}
-                  selected={option.id === chain?.id}
+                  key={option.chainId}
+                  selected={option.chainId === chain?.id}
                   onClick={() => {
+                    setToken(option)
                     if (chainId && dirText === 'From') {
-                      switchNetwork(option.id ?? undefined)
+                      switchNetwork(option.chainId ?? undefined)
                     }
-                    setChain(option)
                   }}
                 >
                   <LogoText
-                    logo={option.logo}
-                    text={option.name}
+                    logo={ChainListMap[option.chainId]?.logo ?? ''}
+                    text={ChainListMap[option.chainId]?.name}
                     gapSize={'large'}
                     fontSize={16}
                     fontWeight={600}
@@ -152,7 +163,12 @@ export function SelectTokenPanel({
           borderRadius: '8px'
         }}
       >
-        <InputNumerical value={''} />
+        <InputNumerical
+          onChange={e => {
+            setAmount(CurrencyAmount.fromAmount(tCurrency, e.target.value))
+          }}
+          value={amount?.toExact().toString() ?? ''}
+        />
         <PopperCard
           sx={{
             width: 150,
@@ -186,8 +202,8 @@ export function SelectTokenPanel({
                 }
               }}
             >
-              {token?.logo && <Image width={24} height={24} src={token?.logo} />}
-              <Typography noWrap>{token?.name || ''}</Typography>
+              {multiToken?.logo && <Image width={24} height={24} src={multiToken?.logo} />}
+              <Typography noWrap>{multiToken?.name || ''}</Typography>
               <Icon />
             </Stack>
           }
@@ -196,9 +212,9 @@ export function SelectTokenPanel({
             {tokenList?.map(option => (
               <MenuItem
                 key={option.id}
-                selected={option.id === token?.id}
+                selected={option.id === multiToken?.id}
                 onClick={() => {
-                  setToken(option)
+                  setMultiToken(option)
                 }}
               >
                 <LogoText

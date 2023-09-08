@@ -3,6 +3,7 @@ import { useMemo } from 'react'
 import ENS_PUBLIC_RESOLVER_ABI from '../constants/abis/ens-public-resolver.json'
 import ENS_ABI from '../constants/abis/ens-registrar.json'
 import { ERC20_BYTES32_ABI } from '../constants/abis/erc20'
+import TRANSFER_TOKEN_ABI from '../constants/abis/transfer-token.json'
 import ERC20_ABI from '../constants/abis/erc20.json'
 import { MIGRATOR_ABI, MIGRATOR_ADDRESS } from '../constants/abis/migrator'
 import UNISOCKS_ABI from '../constants/abis/unisocks.json'
@@ -131,4 +132,8 @@ export function useTransferNFTContract(queryChainId?: ChainId): Contract | null 
     true,
     queryChainId
   )
+}
+
+export function useTransferTokenContract(contractAddress: string, queryChainId?: ChainId): Contract | null {
+  return useContract(contractAddress, TRANSFER_TOKEN_ABI, true, queryChainId)
 }

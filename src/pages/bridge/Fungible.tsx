@@ -1,41 +1,79 @@
-import Collection from '../components/Collection'
 import { Box, Stack, Typography } from '@mui/material'
-import { BackedChainId, ChainId, ChainList, ChainListMap } from '../../constants/chain'
+import { BackedChainId, ChainId, ChainListMap } from '../../constants/chain'
 import Image from '../../components/Image'
 import SwitchIcon from '../../assets/svg/switch.svg'
-import Logo from 'assets/images/logo.png'
 import USDT from '../components/usdt.png'
-import { FromPanel, UserNFTCollection } from '../Bridge'
+import { FromPanel } from '../Bridge'
 import { useCallback, useMemo, useState } from 'react'
-import { Chain } from '../../models/chain'
 import { useSwitchNetwork } from '../../hooks/useSwitchNetwork'
 import { useActiveWeb3React } from '../../hooks'
 import Button from '../../components/Button/Button'
-import { ApprovalState } from '../../hooks/useApproveCallback'
+import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallback'
 import ActionButton from '../../components/Button/ActionButton'
 import { useWalletModalToggle } from '../../state/application/hooks'
-import { useNFTApproveAllCallback } from '../../hooks/useNFTApproveAllCallback'
-import { TRANSFER_NFT_ADDRESS } from '../../constants'
 import TransacitonPendingModal from '../../components/Modal/TransactionModals/TransactionPendingModal'
 import MessageBox from '../../components/Modal/TransactionModals/MessageBox'
 import { useCurrencyBalance } from '../../state/wallet/hooks'
-import { Currency } from '../../constants/token'
+import { Currency, CurrencyAmount } from '../../constants/token'
 import useModal from '../../hooks/useModal'
-import { useTransferNFTCallback } from '../../hooks/useTransferNFT'
 import { SelectTokenPanel } from 'pages/components/SelectTokenPanel'
+import { useTransferTokenCallback } from '../../hooks/useTransferToken'
 
-const tokenList = [
+export interface ChainToken {
+  chainId: ChainId
+  isNative: boolean
+  nativeAddress?: string
+  contractAddress: string
+  decimals: number
+}
+
+export interface MultiChainToken {
+  id: number
+  name: string
+  logo: string
+  tokens: ChainToken[]
+}
+
+const tokenList: MultiChainToken[] = [
   {
-    name: 'zk',
+    id: 0,
+    name: 'MToken',
     logo: USDT,
-    address: '0xc390E699b38F14dB884C635bbf843f7B135113ad',
-    id: 11155111
+    tokens: [
+      {
+        chainId: ChainId.SEPOLIA,
+        isNative: true,
+        nativeAddress: '0x4eD4f447EcAf10F40eC1eC577256FA0a21aB1eCB',
+        contractAddress: '0xE08fEAab8b07654295ad61AaE95E57ff8229f124',
+        decimals: 18
+      },
+      {
+        chainId: ChainId.LOOT_TESTNET,
+        isNative: false,
+        contractAddress: '0x40dff82a0ef0Bbb1D5f0ff338CAcE82428a0c072',
+        decimals: 18
+      }
+    ]
   },
   {
-    name: 'Doge',
-    logo: Logo,
-    address: '0xf61d4B6607F40Ae7fe8F95a54E11e84c9C75B237',
-    id: 11155111
+    id: 1,
+    name: 'MToken1',
+    logo: USDT,
+    tokens: [
+      {
+        chainId: ChainId.SEPOLIA,
+        isNative: true,
+        nativeAddress: '0x40dff82a0ef0Bbb1D5f0ff338CAcE82428a0c072',
+        contractAddress: '0x0F4299A062c2d2CC8B27564e6320c6fBCE95E492',
+        decimals: 18
+      },
+      {
+        chainId: ChainId.LOOT_TESTNET,
+        isNative: false,
+        contractAddress: '0xadA55AB80D9E3A251B5B130EbA95466D9E503117',
+        decimals: 18
+      }
+    ]
   }
 ]
 
@@ -44,45 +82,42 @@ export default function Fungible() {
   const { account, chainId } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
   const { showModal, hideModal } = useModal()
-  const [toToken, setToToken] = useState()
-  const [toChain, setToChain] = useState<Chain | null>(ChainListMap[ChainId.LOOT_TESTNET] ?? null)
-  const [selectedNft, setSelectedNft] = useState<UserNFTCollection>()
+  const [fromToken, setFromToken] = useState<ChainToken>(tokenList[0].tokens[0])
+  const [toToken, setToToken] = useState<ChainToken>(tokenList[0].tokens[1])
+  const [selectedMultiToken, setSelectedMultiToken] = useState<MultiChainToken>(tokenList[0])
+  const [amount, setAmount] = useState<CurrencyAmount | undefined>()
+  const dstId = useMemo(() => BackedChainId[toToken.chainId as number], [toToken])
+  const { run: transfer, tFee } = useTransferTokenCallback(dstId, fromToken, amount)
 
-  const dstId = useMemo(() => BackedChainId[toChain?.id as number], [toChain])
-  const { run: transfer, tFee } = useTransferNFTCallback(dstId, selectedNft !== undefined ? selectedNft : undefined)
-
-  const [isEnteredCollection, setIsEnteredCollection] = useState(false)
-  const [fromChain, setFromChain] = useState<Chain | null>(ChainListMap[ChainId.SEPOLIA] ?? null)
-  const [fromToken, setFromToken] = useState()
-
-  const fromChainList = useMemo(() => {
-    return ChainList.filter(chain => !(chain.id === toChain?.id))
-  }, [toChain?.id])
-
-  const toChainList = useMemo(() => {
-    return ChainList.filter(chain => !(chain.id === fromChain?.id))
-  }, [fromChain?.id])
-
-  const [approveState, approveCallback] = useNFTApproveAllCallback(
-    '0xFF9C1b15B16263C61d017ee9F65C50e4AE0113D7',
-    TRANSFER_NFT_ADDRESS[chainId as ChainId]
+  const [approveState, approveCallback] = useApproveCallback(
+    amount,
+    fromToken.isNative ? fromToken.contractAddress : undefined
   )
 
   const handleSwitchNetwork = useCallback(() => {
-    setSelectedNft(undefined)
-    setFromChain(toChain)
-    setToChain(fromChain)
-  }, [fromChain, toChain])
+    setFromToken(toToken)
+    setToToken(fromToken)
+  }, [fromToken, toToken])
 
-  const balance = useCurrencyBalance(account || undefined, Currency.getNativeCurrency(fromChain?.id || undefined))
+  const onSelectToken = useCallback((multiToken: MultiChainToken) => {
+    const tokens = multiToken.tokens
+    setSelectedMultiToken(multiToken)
+    setFromToken(tokens[0])
+    setToToken(tokens[1])
+  }, [])
+
+  const balance = useCurrencyBalance(account || undefined, Currency.getNativeCurrency(fromToken.chainId || undefined))
+  const tokenBalance = useCurrencyBalance(
+    account || undefined,
+    new Currency(fromToken.chainId, fromToken.nativeAddress ?? fromToken.contractAddress, fromToken.decimals)
+  )
 
   const transferClick = useCallback(async () => {
-    if (!account || !dstId || !selectedNft) return
+    if (!account || !dstId || !amount) return
     showModal(<TransacitonPendingModal />)
     try {
-      const { hash, transactionReceipt } = await transfer(account, dstId, account, selectedNft.tokenId, account)
+      const { hash, transactionReceipt } = await transfer(account, dstId, account, amount, account)
       hideModal()
-      setSelectedNft(undefined)
       showModal(<TransacitonPendingModal pendingText=" " hash={hash} />)
       transactionReceipt.then(() => {
         showModal(
@@ -92,7 +127,7 @@ export default function Fungible() {
                 {'Transaction confirmed' || 'Transaction success'}
               </Typography>
               <Typography color={'#7A9283'}>
-                The NFT is expected to be received on the target chain in a few minutes
+                The Token is expected to be received on the target chain in a few minutes
               </Typography>
             </>
           </MessageBox>
@@ -107,7 +142,7 @@ export default function Fungible() {
       )
       console.error(err)
     }
-  }, [account, dstId, hideModal, selectedNft, showModal, transfer])
+  }, [account, amount, dstId, hideModal, showModal, transfer])
 
   const ActionButtonNode = useMemo(() => {
     if (!account) {
@@ -117,29 +152,49 @@ export default function Fungible() {
         </Button>
       )
     }
-    if (chainId !== fromChain?.id) {
+    if (chainId !== fromToken.chainId) {
       return (
         <Button
           style={{ height: 50, width: '100%', fontSize: 20 }}
-          onClick={() => switchNetwork(fromChain?.id || undefined)}
+          onClick={() => switchNetwork(fromToken.chainId || undefined)}
         >
           Switch Network
+        </Button>
+      )
+    }
+    if (!amount) {
+      return (
+        <Button style={{ height: 50, width: '100%', fontSize: 20 }} disabled>
+          Enter Amount
+        </Button>
+      )
+    }
+    if (tokenBalance && amount?.greaterThan(tokenBalance)) {
+      return (
+        <Button style={{ height: 50, width: '100%', fontSize: 20 }} disabled>
+          {`Insufficient ${selectedMultiToken.name}`}
+        </Button>
+      )
+    }
+    if (!tFee) {
+      return (
+        <Button style={{ height: 50, width: '100%', fontSize: 20 }} disabled>
+          Loading Fess
         </Button>
       )
     }
     if (approveState !== ApprovalState.APPROVED) {
       if (approveState === ApprovalState.PENDING) {
         return (
-          <Button style={{ height: 50, width: '100%', fontSize: 20 }}>Approving use of {fromChain?.name} NFT...</Button>
+          <Button disabled style={{ height: 50, width: '100%', fontSize: 20 }}>
+            Approving use of {selectedMultiToken.name}...
+          </Button>
         )
-      }
-      if (approveState === ApprovalState.UNKNOWN) {
-        return <Button style={{ height: 50, width: '100%', fontSize: 20 }}>Loading...</Button>
       }
       if (approveState === ApprovalState.NOT_APPROVED) {
         return (
           <Button style={{ height: 50, width: '100%', fontSize: 20 }} onClick={approveCallback}>
-            Approve use of {fromChain?.name} NFT
+            Approve use of {selectedMultiToken?.name}
           </Button>
         )
       }
@@ -154,98 +209,95 @@ export default function Fungible() {
     return <ActionButton width="100%" height="50px" onAction={transferClick} actionText="Transfer" />
   }, [
     account,
+    amount,
     approveCallback,
     approveState,
     balance,
     chainId,
-    fromChain?.id,
-    fromChain?.name,
+    fromToken.chainId,
+    selectedMultiToken.name,
     switchNetwork,
     tFee,
     toggleWalletModal,
+    tokenBalance,
     transferClick
   ])
 
   return (
     <>
-      {isEnteredCollection ? (
-        <Collection
-          setSelectedNft={setSelectedNft}
-          fromChain={fromChain}
-          setIsEnteredCollection={setIsEnteredCollection}
+      <FromPanel height={145} bg="#000">
+        <SelectTokenPanel
+          chain={ChainListMap[fromToken.chainId]}
+          amount={amount}
+          setAmount={setAmount}
+          multiToken={selectedMultiToken}
+          token={fromToken}
+          chainId={fromToken.chainId}
+          dirText="From"
+          tokenList={tokenList}
+          setMultiToken={onSelectToken}
+          setToken={setFromToken}
         />
-      ) : (
-        <>
-          <FromPanel height={145} bg="#000">
-            <SelectTokenPanel
-              chain={fromChain}
-              token={fromToken}
-              chainId={chainId}
-              dirText="From"
-              tokenList={tokenList}
-              chainList={fromChainList}
-              setChain={setFromChain}
-              setToken={setFromToken}
-            />
-          </FromPanel>
-          <Box
-            width={'fit-content'}
-            position={'absolute'}
-            sx={{
-              cursor: 'pointer',
-              top: '44.5%',
-              left: '50%',
-              transform: 'translate(-50%, -50%) rotate(90deg)'
-            }}
-            onClick={handleSwitchNetwork}
-          >
-            <Image width={50} src={SwitchIcon} />
-          </Box>
-          <FromPanel height={145} bg="#000">
-            <SelectTokenPanel
-              chain={toChain}
-              token={toToken}
-              tokenList={tokenList}
-              dirText="To"
-              chainList={toChainList}
-              setChain={setToChain}
-              setToken={setToToken}
-            />
-          </FromPanel>
-          <Stack
-            mb={20}
-            direction={'row'}
-            justifyContent={'space-between'}
-            alignItems={'center'}
-            sx={{
-              height: 54,
-              backgroundColor: '#000',
-              borderRadius: '12px',
-              padding: '16px 25px',
-              '& p': {
-                fontWeight: 600,
-                color: '#7A9283',
-                lineHeight: '22px',
-                fontSize: 16,
-                '& span': {
-                  color: '#A5FFBE'
-                }
-              }
-            }}
-          >
-            <Typography>
-              Fees:{' '}
-              <span>
-                {tFee?.toSignificant() || '--'} {fromChain?.symbol}
-              </span>
-            </Typography>
-            <Typography>
-              Estimated Time: <span>3 ~ 5 mins</span>
-            </Typography>
-          </Stack>
-          {ActionButtonNode}
-        </>
-      )}
+      </FromPanel>
+      <Box
+        width={'fit-content'}
+        position={'absolute'}
+        sx={{
+          cursor: 'pointer',
+          top: '44.5%',
+          left: '50%',
+          transform: 'translate(-50%, -50%) rotate(90deg)'
+        }}
+        onClick={handleSwitchNetwork}
+      >
+        <Image width={50} src={SwitchIcon} />
+      </Box>
+      <FromPanel height={145} bg="#000">
+        <SelectTokenPanel
+          chain={ChainListMap[toToken.chainId]}
+          chainId={toToken.chainId}
+          amount={amount}
+          setAmount={setAmount}
+          token={toToken}
+          multiToken={selectedMultiToken}
+          tokenList={tokenList}
+          dirText="To"
+          setMultiToken={onSelectToken}
+          setToken={setToToken}
+        />
+      </FromPanel>
+      <Stack
+        mb={20}
+        direction={'row'}
+        justifyContent={'space-between'}
+        alignItems={'center'}
+        sx={{
+          height: 54,
+          backgroundColor: '#000',
+          borderRadius: '12px',
+          padding: '16px 25px',
+          '& p': {
+            fontWeight: 600,
+            color: '#7A9283',
+            lineHeight: '22px',
+            fontSize: 16,
+            '& span': {
+              color: '#A5FFBE'
+            }
+          }
+        }}
+      >
+        <Typography>
+          Fees:{' '}
+          <span>
+            {tFee?.toSignificant() || '--'} {ChainListMap[fromToken.chainId]?.symbol}
+          </span>
+        </Typography>
+        <Typography>
+          Estimated Time: <span>3 ~ 5 mins</span>
+        </Typography>
+      </Stack>
+      {ActionButtonNode}
     </>
   )
 }
