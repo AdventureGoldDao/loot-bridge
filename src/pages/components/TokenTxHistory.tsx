@@ -155,7 +155,7 @@ export default function TokenTxHistory({
                   }}
                 />
               ))}
-              {historyList?.list?.length === 0 ? (
+              {historyList?.list?.length === 0 || !historyList ? (
                 <Box
                   sx={{
                     width: '100%',
