@@ -6,8 +6,10 @@ import { useTransferNFTContract } from './useContract'
 import { useGasPriceInfo } from './useGasPrice'
 import {
   commitErrorMsg,
+  getUserErc20Detail,
   getUserNFT721Detail,
   getUserOwnedNFT721List,
+  getUserTransferErc20HistoryList,
   getUserTransferNFTHistoryList
 } from 'utils/fetch/server'
 import { useSingleCallResult } from 'state/multicall/hooks'
@@ -150,10 +152,42 @@ export function useTransferNFTHistoryList(account: string) {
   )
 }
 
+export function useTransferErc20HistoryList(account: string) {
+  return useRequest(
+    async () => {
+      const res = await getUserTransferErc20HistoryList(account)
+      return {
+        list: res.data.data.sort((a: any, b: any) => b.timestamp - a.timestamp)
+      }
+    },
+    {
+      ready: !!account,
+      pollingInterval: 15000,
+      refreshDeps: [account]
+    }
+  )
+}
+
 export function useGetNFTDetail(account: string, chainId: number, nftAddress: string) {
   return useRequest(
     async () => {
       const res = await getUserNFT721Detail(account, chainId, nftAddress)
+      return {
+        list: res.data.data
+      }
+    },
+    {
+      cacheKey: `${account}_${chainId}_${nftAddress}`,
+      ready: !!account && !!chainId && !!nftAddress,
+      refreshDeps: [account, chainId, nftAddress]
+    }
+  )
+}
+
+export function useGetErc20Detail(account: string, chainId: number, nftAddress: string) {
+  return useRequest(
+    async () => {
+      const res = await getUserErc20Detail(account, chainId, nftAddress)
       return {
         list: res.data.data
       }

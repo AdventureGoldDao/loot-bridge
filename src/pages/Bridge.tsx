@@ -4,11 +4,11 @@ import Image from 'components/Image'
 import { useState } from 'react'
 import { useActiveWeb3React } from 'hooks'
 import Button from 'components/Button/Button'
-import ComingSoon from './ComingSoon'
 import TxHistory from './components/TxHistory'
 import NoFungible from './bridge/NoFungible'
 import { useWalletModalToggle } from '../state/application/hooks'
 import Fungible from './bridge/Fungible'
+import TokenTxHistory from './components/TokenTxHistory'
 
 export const ControllBtn = styled(Box)({
   width: '100%',
@@ -146,8 +146,8 @@ export default function Bridge() {
   const [active, setActive] = useState(TabState.BRIDGE)
   const [action, setAction] = useState(ActionType.FUNGIBLE)
   const [isEnteredDetail, setIsEnteredDetail] = useState(false)
+  // const [isEnteredErc20Detail, setIsEnteredErc20Detail] = useState(false)
   const [isEnteredCollection, setIsEnteredCollection] = useState(false)
-
   const toggleWalletModal = useWalletModalToggle()
 
   return (
@@ -201,7 +201,11 @@ export default function Bridge() {
         {active === TabState.BRIDGE && (
           <Panel>
             {!isEnteredDetail && !isEnteredCollection && <ActionButtonGroup action={action} setAction={setAction} />}
-            {action === ActionType.NO_FUNGIBLE ? <NoFungible /> : <Fungible />}
+            {action === ActionType.NO_FUNGIBLE ? (
+              <NoFungible isEnteredCollection={isEnteredCollection} setIsEnteredCollection={setIsEnteredCollection} />
+            ) : (
+              <Fungible />
+            )}
           </Panel>
         )}
         {active === TabState.ACCOUNT && (
@@ -228,7 +232,7 @@ export default function Bridge() {
             ) : action === ActionType.NO_FUNGIBLE ? (
               <TxHistory isEnteredDetail={isEnteredDetail} setIsEnteredDetail={setIsEnteredDetail} />
             ) : (
-              <ComingSoon />
+              <TokenTxHistory isEnteredDetail={isEnteredDetail} setIsEnteredDetail={setIsEnteredDetail} />
             )}
           </Panel>
         )}

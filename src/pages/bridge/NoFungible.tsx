@@ -24,7 +24,13 @@ import useModal from '../../hooks/useModal'
 import { useTransferNFTCallback } from '../../hooks/useTransferNFT'
 import { TargetElement } from 'pages/components/SelectTokenPanel'
 
-export default function NoFungible() {
+export default function NoFungible({
+  isEnteredCollection,
+  setIsEnteredCollection
+}: {
+  isEnteredCollection: boolean
+  setIsEnteredCollection: React.Dispatch<React.SetStateAction<boolean>>
+}) {
   const switchNetwork = useSwitchNetwork()
   const { account, chainId } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
@@ -36,7 +42,6 @@ export default function NoFungible() {
   const dstId = useMemo(() => BackedChainId[toChain?.id as number], [toChain])
   const { run: transfer, tFee } = useTransferNFTCallback(dstId, selectedNft !== undefined ? selectedNft : undefined)
 
-  const [isEnteredCollection, setIsEnteredCollection] = useState(false)
   const [fromChain, setFromChain] = useState<Chain | null>(ChainListMap[ChainId.MAINNET] ?? null)
 
   const fromChainList = useMemo(() => {

@@ -32,3 +32,11 @@ export function getUserNFT721Detail(account: string, chainId: number, nftAddress
 export function getUserTransferNFTHistoryList(account: string) {
   return Axios.get(`account/${account}/bridgeRecords`)
 }
+
+export function getUserErc20Detail(account: string, chainId: number, nftAddress: string) {
+  return Axios.get(`account/${account}/${chainId}/${nftAddress}`)
+}
+
+export function getUserTransferErc20HistoryList(account: string) {
+  return Axios.get(`account/${account}/bridgeRecords/ft`)
+}
