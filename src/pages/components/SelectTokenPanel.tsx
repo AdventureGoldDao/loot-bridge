@@ -195,6 +195,7 @@ export function SelectTokenPanel({
                 borderLeft: '1px solid #3C5141',
                 '& p': {
                   width: 100,
+                  fontWeight: 600,
                   textAlign: 'center',
                   textOverflow: 'ellipsis',
                   overflow: 'hidden',
