@@ -4,25 +4,38 @@ import Image from 'components/Image'
 import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
 import SearchIcon from 'assets/svg/search.svg'
 import { Chain } from 'models/chain'
-import { UserNFTCollection } from 'pages/Bridge'
 import { useEffect, useState } from 'react'
 import { useGetNFTDetail, useUserOwnedNFTList } from 'hooks/useTransferNFT'
 import { useActiveWeb3React } from 'hooks'
+import { MultiChainERC721, NFTList } from '../bridge/NoFungible'
 
 export default function Collection({
-  setSelectedNft,
+  setImage,
+  setSelectedTokenId,
+  selectedNFT,
+  setSelectedNFT,
   fromChain,
   setIsEnteredCollection
 }: {
-  setSelectedNft: React.Dispatch<React.SetStateAction<UserNFTCollection | undefined>>
+  setImage: (url: string) => void
+  setSelectedTokenId: (tokenId: string) => void
+  selectedNFT: MultiChainERC721
+  setSelectedNFT: React.Dispatch<React.SetStateAction<MultiChainERC721>>
   fromChain: Chain | null
   setIsEnteredCollection: React.Dispatch<React.SetStateAction<boolean>>
 }) {
   const { account } = useActiveWeb3React()
   const { data: tokenNFTList } = useUserOwnedNFTList(account || '', fromChain?.id || 1)
   const [collection, setCollection] = useState<any>()
-  const { data: nftList } = useGetNFTDetail(account || '', fromChain?.id || 1, collection?.nftAddress || '')
-  console.log('🚀 ~ file: Collection.tsx:23 ~ tokenNFTList:', nftList?.list)
+  const chainERC20 = selectedNFT.tokens.find(({ chainId }) => {
+    return chainId === fromChain?.id
+  })
+  const { data: nftList } = useGetNFTDetail(
+    account || '',
+    fromChain?.id || 1,
+    chainERC20?.nativeAddress ?? (chainERC20?.contractAddress || '')
+  )
+  console.log('🚀 ~ file: Collection.tsx:23 ~ tokenNFTList:', tokenNFTList, nftList, fromChain?.id)
 
   useEffect(() => {
     !collection && setCollection(tokenNFTList?.list?.[0])
@@ -76,14 +89,14 @@ export default function Collection({
             }}
           >
             <Stack direction={'row'} spacing={19} alignItems={'center'}>
-              <Typography>{collection ? 'Loot(for Adventurers)' : 'Select a Collection'}</Typography>
+              <Typography>{selectedNFT ? selectedNFT.name : 'Select a Collection'}</Typography>
             </Stack>
             <ArrowIcon />
           </Box>
         }
       >
         <>
-          {tokenNFTList?.list?.map((option: any, index: number) => (
+          {NFTList?.map((option: any, index: number) => (
             <Box
               key={option.id + index}
               sx={{
@@ -97,25 +110,25 @@ export default function Collection({
                   backgroundColor: '#282D29'
                 }
               }}
-              onClick={() => setCollection(option)}
+              onClick={() => setSelectedNFT(option)}
             >
-              Loot(for Adventurers)
+              {option.name}
             </Box>
           ))}
-          {tokenNFTList?.list?.length === 0 && (
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                color: '#fff',
-                fontSize: 20,
-                lineHeight: '150%'
-              }}
-            >
-              No Collection
-            </Box>
-          )}
+          {/*{tokenNFTList?.list?.length === 0 && (*/}
+          {/*  <Box*/}
+          {/*    sx={{*/}
+          {/*      display: 'flex',*/}
+          {/*      justifyContent: 'center',*/}
+          {/*      alignItems: 'center',*/}
+          {/*      color: '#fff',*/}
+          {/*      fontSize: 20,*/}
+          {/*      lineHeight: '150%'*/}
+          {/*    }}*/}
+          {/*  >*/}
+          {/*    No Collection*/}
+          {/*  </Box>*/}
+          {/*)}*/}
         </>
       </PopperCard>
       <Stack
@@ -154,7 +167,8 @@ export default function Collection({
                 }
               }}
               onClick={() => {
-                setSelectedNft(option)
+                setImage(option.imageUri)
+                setSelectedTokenId(option.tokenId)
                 setIsEnteredCollection(false)
               }}
             >

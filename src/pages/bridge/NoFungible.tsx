@@ -1,12 +1,12 @@
 import Collection from '../components/Collection'
 import { Box, MenuItem, Stack, Typography } from '@mui/material'
 import PopperCard from '../components/PopperCard'
-import { BackedChainId, ChainId, ChainList, ChainListMap } from '../../constants/chain'
+import { BackedChainId, ChainId, ChainListMap } from '../../constants/chain'
 import LogoText from '../../components/LogoText'
 import Image from '../../components/Image'
 import SwitchIcon from '../../assets/svg/switch.svg'
-import { FromPanel, UserNFTCollection } from '../Bridge'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { FromPanel } from '../Bridge'
+import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { Chain } from '../../models/chain'
 import { useSwitchNetwork } from '../../hooks/useSwitchNetwork'
 import { useActiveWeb3React } from '../../hooks'
@@ -15,7 +15,6 @@ import { ApprovalState } from '../../hooks/useApproveCallback'
 import ActionButton from '../../components/Button/ActionButton'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { useNFTApproveAllCallback } from '../../hooks/useNFTApproveAllCallback'
-import { TRANSFER_NFT_ADDRESS } from '../../constants'
 import TransacitonPendingModal from '../../components/Modal/TransactionModals/TransactionPendingModal'
 import MessageBox from '../../components/Modal/TransactionModals/MessageBox'
 import { useCurrencyBalance } from '../../state/wallet/hooks'
@@ -24,49 +23,167 @@ import useModal from '../../hooks/useModal'
 import { useTransferNFTCallback } from '../../hooks/useTransferNFT'
 import { TargetElement } from 'pages/components/SelectTokenPanel'
 
-export default function NoFungible() {
+export interface ChainERC721 {
+  chainId: ChainId
+  isNative: boolean
+  nativeAddress?: string
+  contractAddress: string
+}
+
+export interface MultiChainERC721 {
+  id: number
+  name: string
+  nativeAddress: string
+  tokens: ChainERC721[]
+}
+
+export const NFTList: MultiChainERC721[] = [
+  {
+    id: 0,
+    name: 'Loot(for Adventurers)',
+    nativeAddress: '0xff9c1b15b16263c61d017ee9f65c50e4ae0113d7',
+    tokens: [
+      {
+        chainId: ChainId.MAINNET,
+        isNative: true,
+        nativeAddress: '0xff9c1b15b16263c61d017ee9f65c50e4ae0113d7',
+        contractAddress: '0x341dC75Ae3074f1eBf053fd7Ae5b92A57634cD3A'
+      },
+      {
+        chainId: ChainId.LOOT,
+        isNative: false,
+        contractAddress: '0x341dC75Ae3074f1eBf053fd7Ae5b92A57634cD3A'
+      }
+    ]
+  },
+  {
+    id: 1,
+    name: 'DeGods',
+    nativeAddress: '0x8821BeE2ba0dF28761AffF119D66390D594CD280',
+    tokens: [
+      {
+        chainId: ChainId.MAINNET,
+        isNative: true,
+        nativeAddress: '0x8821BeE2ba0dF28761AffF119D66390D594CD280',
+        contractAddress: '0x9B75E68dd5b0cbCFEb0cCd88B1396038bc0D64c4'
+      },
+      {
+        chainId: ChainId.LOOT,
+        isNative: false,
+        contractAddress: '0x9B75E68dd5b0cbCFEb0cCd88B1396038bc0D64c4'
+      }
+    ]
+  },
+  {
+    id: 2,
+    name: 'Mutant Ape Yacht Club',
+    nativeAddress: '0x2C6e666bae4Af750a3Bc8B32a066836c5e7dfcB0',
+    tokens: [
+      {
+        chainId: ChainId.MAINNET,
+        isNative: true,
+        nativeAddress: '0x2C6e666bae4Af750a3Bc8B32a066836c5e7dfcB0',
+        contractAddress: '0x60E4d786628Fea6478F785A6d7e704777c86a7c6'
+      },
+      {
+        chainId: ChainId.LOOT,
+        isNative: false,
+        contractAddress: '0x60E4d786628Fea6478F785A6d7e704777c86a7c6'
+      }
+    ]
+  },
+  {
+    id: 3,
+    name: 'Azuki',
+    nativeAddress: '0x15FaaD83bB9887c3e99C5B7998259dF03F7eD108',
+    tokens: [
+      {
+        chainId: ChainId.MAINNET,
+        isNative: true,
+        nativeAddress: '0x15FaaD83bB9887c3e99C5B7998259dF03F7eD108',
+        contractAddress: '0xED5AF388653567Af2F388E6224dC7C4b3241C544'
+      },
+      {
+        chainId: ChainId.LOOT,
+        isNative: false,
+        contractAddress: '0xED5AF388653567Af2F388E6224dC7C4b3241C544'
+      }
+    ]
+  },
+  {
+    id: 4,
+    name: 'Pudgy Penguins ',
+    nativeAddress: '0x0cb532d0D345d53c3D2d2862132643a130C2d6DC',
+    tokens: [
+      {
+        chainId: ChainId.MAINNET,
+        isNative: true,
+        nativeAddress: '0x0cb532d0D345d53c3D2d2862132643a130C2d6DC',
+        contractAddress: '0xbd3531da5cf5857e7cfaa92426877b022e612cf8'
+      },
+      {
+        chainId: ChainId.LOOT,
+        isNative: false,
+        contractAddress: '0xbd3531da5cf5857e7cfaa92426877b022e612cf8'
+      }
+    ]
+  }
+]
+
+export default function NoFungible({
+  isEnteredCollection,
+  setIsEnteredCollection
+}: {
+  isEnteredCollection: boolean
+  setIsEnteredCollection: Dispatch<SetStateAction<boolean>>
+}) {
   const switchNetwork = useSwitchNetwork()
   const { account, chainId } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
   const { showModal, hideModal } = useModal()
 
   const [toChain, setToChain] = useState<Chain | null>(ChainListMap[ChainId.LOOT] ?? null)
-  const [selectedNft, setSelectedNft] = useState<UserNFTCollection>()
-
-  const dstId = useMemo(() => BackedChainId[toChain?.id as number], [toChain])
-  const { run: transfer, tFee } = useTransferNFTCallback(dstId, selectedNft !== undefined ? selectedNft : undefined)
-
-  const [isEnteredCollection, setIsEnteredCollection] = useState(false)
+  const [selectedNft, setSelectedNft] = useState<MultiChainERC721>(NFTList[0])
+  const [image, setImage] = useState<string | undefined>()
+  console.log('selectedNft', selectedNft)
+  const [selectedTokenId, setSelectedTokenId] = useState<string | undefined>()
   const [fromChain, setFromChain] = useState<Chain | null>(ChainListMap[ChainId.MAINNET] ?? null)
 
+  const chainERC721: ChainERC721 | undefined = useMemo(() => {
+    return selectedNft.tokens.find(({ chainId }) => {
+      return chainId === fromChain?.id
+    })
+  }, [fromChain?.id, selectedNft.tokens])
+  const dstId = useMemo(() => BackedChainId[toChain?.id as number], [toChain])
+  const { run: transfer, tFee } = useTransferNFTCallback(dstId, chainERC721?.contractAddress, selectedTokenId)
+
   const fromChainList = useMemo(() => {
-    return ChainList.filter(chain => !(chain.id === toChain?.id))
-  }, [toChain?.id])
+    return selectedNft.tokens.map(({ chainId }) => ChainListMap[chainId])
+  }, [selectedNft.tokens])
 
   const toChainList = useMemo(() => {
-    return ChainList.filter(chain => !(chain.id === fromChain?.id))
-  }, [fromChain?.id])
+    return selectedNft.tokens.map(({ chainId }) => ChainListMap[chainId])
+  }, [selectedNft.tokens])
 
   const [approveState, approveCallback] = useNFTApproveAllCallback(
-    '0xFF9C1b15B16263C61d017ee9F65C50e4AE0113D7',
-    TRANSFER_NFT_ADDRESS[chainId as ChainId]
+    chainERC721?.contractAddress,
+    chainERC721?.nativeAddress
   )
 
   const handleSwitchNetwork = useCallback(() => {
-    setSelectedNft(undefined)
     setFromChain(toChain)
     setToChain(fromChain)
+    setSelectedTokenId(undefined)
   }, [fromChain, toChain])
 
   const balance = useCurrencyBalance(account || undefined, Currency.getNativeCurrency(fromChain?.id || undefined))
 
   const transferClick = useCallback(async () => {
-    if (!account || !dstId || !selectedNft) return
+    if (!account || !dstId || !selectedNft || !selectedTokenId) return
     showModal(<TransacitonPendingModal />)
     try {
-      const { hash, transactionReceipt } = await transfer(account, dstId, account, selectedNft.tokenId, account)
+      const { hash, transactionReceipt } = await transfer(account, dstId, account, account, selectedTokenId)
       hideModal()
-      setSelectedNft(undefined)
       showModal(<TransacitonPendingModal pendingText=" " hash={hash} />)
       transactionReceipt.then(() => {
         showModal(
@@ -91,7 +208,7 @@ export default function NoFungible() {
       )
       console.error(err)
     }
-  }, [account, dstId, hideModal, selectedNft, showModal, transfer])
+  }, [account, dstId, hideModal, selectedNft, selectedTokenId, showModal, transfer])
 
   const ActionButtonNode = useMemo(() => {
     if (!account) {
@@ -158,15 +275,14 @@ export default function NoFungible() {
     transferClick
   ])
 
-  useEffect(() => {
-    setSelectedNft(undefined)
-  }, [account, chainId])
-
   return (
     <>
       {isEnteredCollection ? (
         <Collection
-          setSelectedNft={setSelectedNft}
+          setImage={setImage}
+          setSelectedTokenId={setSelectedTokenId}
+          selectedNFT={selectedNft}
+          setSelectedNFT={setSelectedNft}
           fromChain={fromChain}
           setIsEnteredCollection={setIsEnteredCollection}
         />
@@ -199,16 +315,16 @@ export default function NoFungible() {
                   {fromChainList?.map(option => (
                     <MenuItem
                       onClick={() => {
-                        switchNetwork(option.id)
-                        setFromChain(ChainListMap[option.id] ?? null)
+                        switchNetwork(option?.id)
+                        option?.id && setFromChain(ChainListMap[option.id] ?? null)
                       }}
-                      value={option.id}
-                      key={option.id}
-                      selected={chainId === option.id}
+                      value={option?.id}
+                      key={option?.id}
+                      selected={chainId === option?.id}
                     >
                       <LogoText
-                        logo={option.logo}
-                        text={option.name}
+                        logo={option?.logo ?? ''}
+                        text={option?.name}
                         gapSize={'large'}
                         fontSize={16}
                         fontWeight={600}
@@ -260,15 +376,15 @@ export default function NoFungible() {
                   {toChainList?.map(option => (
                     <MenuItem
                       onClick={() => {
-                        setToChain(ChainListMap[option.id] ?? null)
+                        option?.id && setToChain(ChainListMap[option.id] ?? null)
                       }}
-                      value={option.id}
-                      key={option.id}
-                      selected={chainId === option.id}
+                      value={option?.id}
+                      key={option?.id}
+                      selected={chainId === option?.id}
                     >
                       <LogoText
-                        logo={option.logo}
-                        text={option.name}
+                        logo={option?.logo ?? ''}
+                        text={option?.name}
                         gapSize={'large'}
                         fontSize={16}
                         fontWeight={600}
@@ -280,7 +396,7 @@ export default function NoFungible() {
               </PopperCard>
             </Box>
           </FromPanel>
-          {!selectedNft ? (
+          {!selectedNft || !selectedTokenId ? (
             <Stack
               direction={'row'}
               sx={{
@@ -318,13 +434,13 @@ export default function NoFungible() {
                 setIsEnteredCollection(true)
               }}
             >
-              <Image width={76} style={{ borderRadius: '7px' }} src={selectedNft?.imageUri || ''} />
+              <Image width={76} style={{ borderRadius: '7px' }} src={image ?? ''} />
               <Box ml={34}>
                 <Typography color={'#7A9283'} fontSize={18} fontWeight={500}>
                   {selectedNft.name}
                 </Typography>
                 <Typography color={'#ebebeb'} fontSize={24} fontWeight={600} mt={8}>
-                  #{selectedNft.tokenId}
+                  #{selectedTokenId}
                 </Typography>
               </Box>
             </Stack>

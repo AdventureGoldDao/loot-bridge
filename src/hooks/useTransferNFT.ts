@@ -13,12 +13,11 @@ import {
 import { useSingleCallResult } from 'state/multicall/hooks'
 import { formatNumber } from 'utils'
 import { useRequest } from 'ahooks'
-import { UserNFTCollection } from 'pages/Bridge'
 import { CurrencyAmount } from 'constants/token'
 
-export function useTransferNFTCallback(dstChainId: number, selectedNft: UserNFTCollection | undefined) {
+export function useTransferNFTCallback(dstChainId: number, contractAddress?: string, tokenId?: string) {
   const addTransaction = useTransactionAdder()
-  const contract = useTransferNFTContract()
+  const contract = useTransferNFTContract(contractAddress)
   const { account, chainId } = useActiveWeb3React()
   const gasPriceInfoCallback = useGasPriceInfo()
   const tFee = useSingleCallResult(
@@ -27,27 +26,28 @@ export function useTransferNFTCallback(dstChainId: number, selectedNft: UserNFTC
     [
       dstChainId,
       account || undefined,
-      selectedNft?.tokenId,
+      tokenId,
       'false',
       '0x00010000000000000000000000000000000000000000000000000000000000030d40'
     ],
     undefined,
     chainId
   ).result
-
+  console.log('tag-->', dstChainId, account, tokenId)
   const run = useCallback(
     async (
       fromAddr: string,
       dstChainId: number,
       toAddr: string,
-      tokenId: number,
-      refundAddr: string
+      refundAddr: string,
+      tokenId?: number | string
     ): Promise<{
       hash: string
       transactionReceipt: Promise<TransactionReceipt>
     }> => {
       if (!account) throw new Error('none account')
       if (!contract) throw new Error('none contract')
+      if (!tokenId) throw new Error('none tokenId')
 
       const args = [
         fromAddr,
@@ -58,7 +58,7 @@ export function useTransferNFTCallback(dstChainId: number, selectedNft: UserNFTC
         '0x0000000000000000000000000000000000000000',
         '0x00010000000000000000000000000000000000000000000000000000000000030d40'
       ]
-
+      console.log('args', args)
       const method = 'sendFrom'
       const { gasLimit, gasPrice } = await gasPriceInfoCallback(
         contract,

@@ -201,7 +201,11 @@ export default function Bridge() {
         {active === TabState.BRIDGE && (
           <Panel>
             {!isEnteredDetail && !isEnteredCollection && <ActionButtonGroup action={action} setAction={setAction} />}
-            {action === ActionType.NO_FUNGIBLE ? <NoFungible /> : <Fungible />}
+            {action === ActionType.NO_FUNGIBLE ? (
+              <NoFungible isEnteredCollection={isEnteredCollection} setIsEnteredCollection={setIsEnteredCollection} />
+            ) : (
+              <Fungible />
+            )}
           </Panel>
         )}
         {active === TabState.ACCOUNT && (

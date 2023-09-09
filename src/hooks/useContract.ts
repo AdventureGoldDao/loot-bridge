@@ -15,7 +15,6 @@ import { getOtherNetworkLibrary } from 'connectors/MultiNetworkConnector'
 import ERC721_ABI from '../constants/abis/erc721.json'
 import ERC1155_ABI from '../constants/abis/erc1155.json'
 import TRANSFER_NFT_ADDRESS_ABI from '../constants/abis/transfer-nft-from-bsc.json'
-import { TRANSFER_NFT_ADDRESS } from '../constants'
 
 // returns null on errors
 function useContract(
@@ -124,14 +123,8 @@ export function useERC1155Contract(address: string | undefined, queryChainId?: C
   return useContract(address, ERC1155_ABI, true, queryChainId)
 }
 
-export function useTransferNFTContract(queryChainId?: ChainId): Contract | null {
-  const { chainId } = useActiveWeb3React()
-  return useContract(
-    queryChainId || chainId ? TRANSFER_NFT_ADDRESS[(queryChainId || chainId) as ChainId] : undefined,
-    TRANSFER_NFT_ADDRESS_ABI,
-    true,
-    queryChainId
-  )
+export function useTransferNFTContract(address?: string, queryChainId?: ChainId): Contract | null {
+  return useContract(address, TRANSFER_NFT_ADDRESS_ABI, true, queryChainId)
 }
 
 export function useTransferTokenContract(contractAddress: string, queryChainId?: ChainId): Contract | null {
