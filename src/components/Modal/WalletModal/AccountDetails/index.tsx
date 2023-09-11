@@ -161,6 +161,8 @@ export default function AccountDetails({
               <Button
                 variant="text"
                 sx={{
+                  width: 'auto',
+                  height: 10,
                   color: '#A5FFBE'
                 }}
                 onClick={clearAllTransactionsCallback}

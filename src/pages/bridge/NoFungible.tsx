@@ -58,6 +58,24 @@ export const NFTList: MultiChainERC721[] = [
   },
   {
     id: 1,
+    name: 'MLOOT',
+    nativeAddress: '0x1dfe7Ca09e99d10835Bf73044a23B73Fc20623DF',
+    tokens: [
+      {
+        chainId: ChainId.MAINNET,
+        isNative: true,
+        nativeAddress: '0x1dfe7Ca09e99d10835Bf73044a23B73Fc20623DF',
+        contractAddress: '0x77d9e6fd235A18927ED117B63Cf221e91D4CD302'
+      },
+      {
+        chainId: ChainId.LOOT,
+        isNative: false,
+        contractAddress: '0x77d9e6fd235A18927ED117B63Cf221e91D4CD302'
+      }
+    ]
+  },
+  {
+    id: 2,
     name: 'DeGods',
     nativeAddress: '0x8821BeE2ba0dF28761AffF119D66390D594CD280',
     tokens: [
@@ -75,7 +93,7 @@ export const NFTList: MultiChainERC721[] = [
     ]
   },
   {
-    id: 2,
+    id: 3,
     name: 'Mutant Ape Yacht Club',
     nativeAddress: '0x2C6e666bae4Af750a3Bc8B32a066836c5e7dfcB0',
     tokens: [
@@ -93,7 +111,7 @@ export const NFTList: MultiChainERC721[] = [
     ]
   },
   {
-    id: 3,
+    id: 4,
     name: 'Azuki',
     nativeAddress: '0x15FaaD83bB9887c3e99C5B7998259dF03F7eD108',
     tokens: [
@@ -111,7 +129,7 @@ export const NFTList: MultiChainERC721[] = [
     ]
   },
   {
-    id: 4,
+    id: 5,
     name: 'Pudgy Penguins ',
     nativeAddress: '0x0cb532d0D345d53c3D2d2862132643a130C2d6DC',
     tokens: [
@@ -145,7 +163,6 @@ export default function NoFungible({
   const [toChain, setToChain] = useState<Chain | null>(ChainListMap[ChainId.LOOT] ?? null)
   const [selectedNft, setSelectedNft] = useState<MultiChainERC721>(NFTList[0])
   const [image, setImage] = useState<string | undefined>()
-  console.log('selectedNft', selectedNft)
   const [selectedTokenId, setSelectedTokenId] = useState<string | undefined>()
   const [fromChain, setFromChain] = useState<Chain | null>(ChainListMap[ChainId.MAINNET] ?? null)
 
@@ -166,8 +183,8 @@ export default function NoFungible({
   }, [selectedNft.tokens])
 
   const [approveState, approveCallback] = useNFTApproveAllCallback(
-    chainERC721?.contractAddress,
-    chainERC721?.nativeAddress
+    chainERC721?.nativeAddress,
+    chainERC721?.contractAddress
   )
 
   const handleSwitchNetwork = useCallback(() => {
@@ -242,7 +259,11 @@ export default function NoFungible({
         )
       }
       if (approveState === ApprovalState.UNKNOWN) {
-        return <Button style={{ height: 50, width: '100%', fontSize: 20 }}>Loading...</Button>
+        return (
+          <Button disabled style={{ height: 50, width: '100%', fontSize: 20 }}>
+            Loading...
+          </Button>
+        )
       }
       if (approveState === ApprovalState.NOT_APPROVED) {
         return (

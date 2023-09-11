@@ -4,8 +4,7 @@ import Image from 'components/Image'
 import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
 import SearchIcon from 'assets/svg/search.svg'
 import { Chain } from 'models/chain'
-import { useEffect, useState } from 'react'
-import { useGetNFTDetail, useUserOwnedNFTList } from 'hooks/useTransferNFT'
+import { useGetNFTDetail } from 'hooks/useTransferNFT'
 import { useActiveWeb3React } from 'hooks'
 import { MultiChainERC721, NFTList } from '../bridge/NoFungible'
 
@@ -25,21 +24,17 @@ export default function Collection({
   setIsEnteredCollection: React.Dispatch<React.SetStateAction<boolean>>
 }) {
   const { account } = useActiveWeb3React()
-  const { data: tokenNFTList } = useUserOwnedNFTList(account || '', fromChain?.id || 1)
-  const [collection, setCollection] = useState<any>()
   const chainERC20 = selectedNFT.tokens.find(({ chainId }) => {
     return chainId === fromChain?.id
   })
+
   const { data: nftList } = useGetNFTDetail(
     account || '',
     fromChain?.id || 1,
     chainERC20?.nativeAddress ?? (chainERC20?.contractAddress || '')
   )
-  console.log('🚀 ~ file: Collection.tsx:23 ~ tokenNFTList:', tokenNFTList, nftList, fromChain?.id)
+  console.log('🚀 ~ file: Collection.tsx:23 ~ tokenNFTList:', chainERC20)
 
-  useEffect(() => {
-    !collection && setCollection(tokenNFTList?.list?.[0])
-  }, [collection, tokenNFTList?.list])
   return (
     <Stack>
       <Typography
@@ -133,7 +128,7 @@ export default function Collection({
       </PopperCard>
       <Stack
         mt={15}
-        justifyContent={collection === undefined ? 'center' : 'flex-start'}
+        justifyContent={!nftList ? 'center' : 'flex-start'}
         direction={'column'}
         spacing={12}
         sx={{
@@ -200,7 +195,7 @@ export default function Collection({
             No Data
           </Box>
         )}
-        {collection === undefined && (
+        {!nftList && (
           <Box
             sx={{
               display: 'flex',
