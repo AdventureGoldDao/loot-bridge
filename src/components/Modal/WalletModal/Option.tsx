@@ -6,6 +6,7 @@ import { ActivationStatus, useActivationState } from 'connection/activate'
 import { Connection } from 'connection/types'
 import { useAppSelector } from 'state/hooks'
 import { getConnection } from 'connection'
+import { useActiveWeb3React } from 'hooks'
 
 const GreenCircle = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -37,8 +38,9 @@ export default function Option({
   id: string
 }) {
   const { activationState, tryActivation } = useActivationState()
+  const { active: _active } = useActiveWeb3React()
   const selectedWallet = useAppSelector(state => state.userWallet.selectedWallet)
-  const curConnection = selectedWallet ? getConnection(selectedWallet) : undefined
+  const curConnection = selectedWallet && _active ? getConnection(selectedWallet) : undefined
 
   const activate = () =>
     active &&
