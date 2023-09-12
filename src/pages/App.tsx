@@ -4,7 +4,6 @@ import { styled } from '@mui/material'
 import Header from '../components/Header'
 import Polling from '../components/essential/Polling'
 import Popups from '../components/essential/Popups'
-import Web3ReactManager from '../components/essential/Web3ReactManager'
 // import WarningModal from '../components/Modal/WarningModal'
 // import ComingSoon from './ComingSoon'
 import { ModalProvider } from 'context/ModalContext'
@@ -66,14 +65,12 @@ export default function App() {
               <Popups />
               <Polling />
               {/* <WarningModal /> */}
-              <Web3ReactManager>
-                <Routes>
-                  {/* <Route path={routes.HOME} element={<Home />} /> */}
-                  <Route path={routes.BRIDGE} element={<Bridge />} />
-                  {/* <Route path={routes.EXPLORER} element={<Explorer />} /> */}
-                  <Route path="*" element={<Navigate to={routes.BRIDGE} replace />} />
-                </Routes>
-              </Web3ReactManager>
+              <Routes>
+                {/* <Route path={routes.HOME} element={<Home />} /> */}
+                <Route path={routes.BRIDGE} element={<Bridge />} />
+                {/* <Route path={routes.EXPLORER} element={<Explorer />} /> */}
+                <Route path="*" element={<Navigate to={routes.BRIDGE} replace />} />
+              </Routes>
             </BodyWrapper>
             <Footer />
           </ContentWrapper>

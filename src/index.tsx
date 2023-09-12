@@ -1,23 +1,19 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { createWeb3ReactRoot, Web3ReactProvider } from '@web3-react/core'
 import 'inter-ui'
 import { CssBaseline, ThemeProvider as MuiThemeProvider, StyledEngineProvider } from '@mui/material'
 import theme from 'theme/index'
 import { Provider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom'
 import Blocklist from './components/essential/Blocklist'
-import { NetworkContextName } from './constants'
 import App from './pages/App'
 import store from './state'
 import * as serviceWorkerRegistration from './serviceWorkerRegistration'
 import ApplicationUpdater from './state/application/updater'
 import MulticallUpdater from './state/multicall/updater'
 import TransactionUpdater from './state/transactions/updater'
-import getLibrary from './utils/getLibrary'
 import { Buffer } from 'buffer'
-
-const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName)
+import Web3Provider from 'components/Web3Provider'
 
 function Updaters() {
   return (
@@ -36,23 +32,21 @@ const root = createRoot(container!)
 
 root.render(
   <StrictMode>
-    <Web3ReactProvider getLibrary={getLibrary}>
-      <Web3ProviderNetwork getLibrary={getLibrary}>
+    <Provider store={store}>
+      <Web3Provider>
         <Blocklist>
-          <Provider store={store}>
-            <Updaters />
-            <StyledEngineProvider injectFirst>
-              <MuiThemeProvider theme={theme}>
-                <CssBaseline />
-                <BrowserRouter>
-                  <App />
-                </BrowserRouter>
-              </MuiThemeProvider>
-            </StyledEngineProvider>
-          </Provider>
+          <Updaters />
+          <StyledEngineProvider injectFirst>
+            <MuiThemeProvider theme={theme}>
+              <CssBaseline />
+              <BrowserRouter>
+                <App />
+              </BrowserRouter>
+            </MuiThemeProvider>
+          </StyledEngineProvider>
         </Blocklist>
-      </Web3ProviderNetwork>
-    </Web3ReactProvider>
+      </Web3Provider>
+    </Provider>
   </StrictMode>
 )
 

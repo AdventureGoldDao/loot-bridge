@@ -6,13 +6,17 @@ import { updateVersion } from './global/actions'
 import user from './user/reducer'
 import transactions from './transactions/reducer'
 import multicall from './multicall/reducer'
+import wallets from './wallet/reducer'
+import userWallet from './userWallet/reducer'
 
-const PERSISTED_KEYS: string[] = ['user', 'transactions']
+const PERSISTED_KEYS: string[] = ['user', 'transactions', 'userWallet']
 
 const store = configureStore({
   reducer: {
     application,
     user,
+    wallets,
+    userWallet,
     transactions,
     multicall
   },

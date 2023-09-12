@@ -2,6 +2,10 @@ import React from 'react'
 import { styled, Button } from '@mui/material'
 import { ExternalLink } from 'theme/components'
 import LogoText from 'components/LogoText'
+import { ActivationStatus, useActivationState } from 'connection/activate'
+import { Connection } from 'connection/types'
+import { useAppSelector } from 'state/hooks'
+import { getConnection } from 'connection'
 
 const GreenCircle = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -19,21 +23,33 @@ const GreenCircle = styled('div')(({ theme }) => ({
 
 export default function Option({
   link = null,
-  clickable = true,
-  onClick = null,
   header,
+  connection,
   icon,
   active = false,
   id
 }: {
   link?: string | null
-  clickable?: boolean
-  onClick?: (() => void) | null
   header: React.ReactNode
+  connection?: Connection
   icon: string
   active?: boolean
   id: string
 }) {
+  const { activationState, tryActivation } = useActivationState()
+  const selectedWallet = useAppSelector(state => state.userWallet.selectedWallet)
+  const curConnection = selectedWallet ? getConnection(selectedWallet) : undefined
+
+  const activate = () =>
+    active &&
+    connection &&
+    tryActivation(connection, () => {}).catch(err => {
+      console.error('error message:', err)
+    })
+
+  const isSomeOptionPending = activationState.status === ActivationStatus.PENDING
+  const isCurrentOptionPending = isSomeOptionPending && activationState.connection.type === connection?.type
+
   const content = (
     <>
       <Button
@@ -41,10 +57,10 @@ export default function Option({
         key={id}
         sx={{
           color: active ? 'transparent' : undefined,
-          width: 320
+          width: '100%'
         }}
-        onClick={onClick ?? undefined}
-        disabled={!clickable || active}
+        onClick={activate}
+        disabled={!active || isCurrentOptionPending || connection === curConnection}
       >
         {active ? (
           <GreenCircle>
