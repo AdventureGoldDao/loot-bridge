@@ -146,7 +146,6 @@ export default function Bridge() {
   const [active, setActive] = useState(TabState.BRIDGE)
   const [action, setAction] = useState(ActionType.FUNGIBLE)
   const [isEnteredDetail, setIsEnteredDetail] = useState(false)
-  // const [isEnteredErc20Detail, setIsEnteredErc20Detail] = useState(false)
   const [isEnteredCollection, setIsEnteredCollection] = useState(false)
   const toggleWalletModal = useWalletModalToggle()
 
@@ -168,11 +167,7 @@ export default function Bridge() {
               setIsEnteredCollection(false)
             }}
           >
-            {active === TabState.BRIDGE ? (
-              <Image width={15.84} src={activeIcon}></Image>
-            ) : (
-              <Image width={15.84} src="" />
-            )}
+            {active === TabState.BRIDGE ? <Image width={15.84} src={activeIcon} /> : <Image width={15.84} src="" />}
             <Typography
               fontWeight={active === TabState.BRIDGE ? 700 : 600}
               color={active === TabState.BRIDGE ? '#A5FFBE' : '#7FB093'}
