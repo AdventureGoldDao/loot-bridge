@@ -37,40 +37,60 @@ export interface MultiChainToken {
 const tokenList: MultiChainToken[] = [
   {
     id: 0,
-    name: 'MToken',
+    name: 'USDT',
     logo: USDT,
     tokens: [
       {
-        chainId: ChainId.SEPOLIA,
+        chainId: ChainId.MAINNET,
         isNative: true,
-        nativeAddress: '0x4eD4f447EcAf10F40eC1eC577256FA0a21aB1eCB',
-        contractAddress: '0xE08fEAab8b07654295ad61AaE95E57ff8229f124',
-        decimals: 18
+        nativeAddress: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+        contractAddress: '0x976Ce6d3a66F276D610eb6Fa82B6Adca273A798F',
+        decimals: 6
       },
       {
-        chainId: ChainId.LOOT_TESTNET,
+        chainId: ChainId.LOOT,
         isNative: false,
-        contractAddress: '0x40dff82a0ef0Bbb1D5f0ff338CAcE82428a0c072',
+        contractAddress: '0x78e0AeCd5Bbfd12557632106B0B4332BA04a6556',
         decimals: 18
       }
     ]
   },
   {
     id: 1,
-    name: 'MToken1',
-    logo: USDT,
+    name: 'USDC',
+    logo: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
     tokens: [
       {
-        chainId: ChainId.SEPOLIA,
+        chainId: ChainId.MAINNET,
         isNative: true,
-        nativeAddress: '0x40dff82a0ef0Bbb1D5f0ff338CAcE82428a0c072',
-        contractAddress: '0x0F4299A062c2d2CC8B27564e6320c6fBCE95E492',
+        nativeAddress: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+        contractAddress: '0x91854a72aE54f69351A545d1AE8b74c4E2959d08',
+        decimals: 6
+      },
+      {
+        chainId: ChainId.LOOT,
+        isNative: false,
+        contractAddress: '0xccf83073b64c987D1ca9028055864C9bC66Db838',
+        decimals: 18
+      }
+    ]
+  },
+  {
+    id: 2,
+    name: 'DAI',
+    logo: 'https://assets.coingecko.com/coins/images/9956/small/Badge_Dai.png?1687143508',
+    tokens: [
+      {
+        chainId: ChainId.MAINNET,
+        isNative: true,
+        nativeAddress: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
+        contractAddress: '0x238976DC5F6cfa166A79A82FD526e9B8397a5046',
         decimals: 18
       },
       {
-        chainId: ChainId.LOOT_TESTNET,
+        chainId: ChainId.LOOT,
         isNative: false,
-        contractAddress: '0xadA55AB80D9E3A251B5B130EbA95466D9E503117',
+        contractAddress: '0x238976DC5F6cfa166A79A82FD526e9B8397a5046',
         decimals: 18
       }
     ]

@@ -188,8 +188,10 @@ export default function NoFungible({
   )
 
   const handleSwitchNetwork = useCallback(() => {
-    setFromChain(toChain)
-    setToChain(fromChain)
+    const cToChain = toChain
+    const cFromChain = fromChain
+    setFromChain(cToChain)
+    setToChain(cFromChain)
     setSelectedTokenId(undefined)
   }, [fromChain, toChain])
 
