@@ -1,5 +1,5 @@
 import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
-import {Fragment, useCallback, useEffect, useState} from 'react'
+import { Fragment, useCallback, useEffect, useState } from 'react'
 import { useActiveWeb3React } from 'hooks'
 import { useTransferErc20HistoryList } from 'hooks/useTransferNFT'
 import { ChainId, ChainListMap } from 'constants/chain'
@@ -60,9 +60,9 @@ export default function TokenTxHistory({
     setTableIndex(index)
   }, [])
 
-  useEffect(()=>{
+  useEffect(() => {
     setIsEnteredDetail(false)
-  },[account])
+  }, [account, setIsEnteredDetail])
 
   return (
     <>
