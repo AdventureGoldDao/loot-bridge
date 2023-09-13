@@ -9,7 +9,7 @@ import PopperCard from './PopperCard'
 import LogoText from 'components/LogoText'
 // import { ChainListMap } from 'constants/chain'
 import { useSwitchNetwork } from 'hooks/useSwitchNetwork'
-import { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction, useState } from 'react'
 import { useActiveWeb3React } from 'hooks'
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import { Currency, CurrencyAmount } from 'constants/token'
@@ -68,6 +68,7 @@ export function SelectTokenPanel({
   tokenList: MultiChainToken[]
 }) {
   const { account } = useActiveWeb3React()
+  const [value, setValue] = useState('')
   const switchNetwork = useSwitchNetwork()
   const tCurrency = new Currency(
     token.chainId,
@@ -171,9 +172,10 @@ export function SelectTokenPanel({
       >
         <InputNumerical
           onChange={e => {
+            setValue(e.target.value)
             setAmount(CurrencyAmount.fromAmount(tCurrency, e.target.value))
           }}
-          value={amount?.toExact().toString() ?? ''}
+          value={chainId && dirText === 'From' ? value : amount?.toExact().toString() ?? ''}
         />
         <PopperCard
           sx={{
