@@ -211,6 +211,7 @@ export default function NoFungible({
               <Typography fontSize={22} color={'#A5FFBE'}>
                 {'Transaction confirmed' || 'Transaction success'}
               </Typography>
+              <br />
               <Typography color={'#7A9283'}>
                 The NFT is expected to be received on the target chain in a few minutes
               </Typography>
