@@ -66,17 +66,21 @@ export default function Erc20Detail({
           </Typography>
           <Typography color={'#A5FFBE'} fontSize={16} display={'flex'} flexDirection={'column'}>
             <span>{ChainListMap[detailData?.toChain || 1]?.name}</span>
-            <span
-              style={{ color: '#4BE9FF', textDecoration: 'underline', cursor: 'pointer' }}
-              onClick={() => {
-                window.open(
-                  getEtherscanLink(detailData && detailData.toChain, detailData?.receivedTx || '', 'transaction'),
-                  '_blank'
-                )
-              }}
-            >
-              Txid: {shortenHash(detailData.receivedTx)}
-            </span>
+            {detailData.receivedTx ? (
+              <span
+                style={{ color: '#4BE9FF', textDecoration: 'underline', cursor: 'pointer' }}
+                onClick={() => {
+                  window.open(
+                    getEtherscanLink(detailData && detailData.toChain, detailData?.receivedTx || '', 'transaction'),
+                    '_blank'
+                  )
+                }}
+              >
+                Txid: {shortenHash(detailData.receivedTx)}
+              </span>
+            ) : (
+              <span style={{ color: '#4BE9FF', textDecoration: 'underline' }}>Confirming</span>
+            )}
           </Typography>{' '}
         </Stack>
         <Stack direction={'row'} justifyContent={'flex-start'} spacing={24}>

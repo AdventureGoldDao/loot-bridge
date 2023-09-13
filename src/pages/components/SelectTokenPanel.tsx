@@ -118,9 +118,16 @@ export function SelectTokenPanel({
             }}
             placement="bottom-start"
             targetElement={
-              <Typography color={'#A5FFBE'} sx={{ cursor: 'pointer' }}>
-                {chain?.name}
-              </Typography>
+              <Stack
+                direction={'row'}
+                alignItems={'center'}
+                justifyContent={'flex-start'}
+                spacing={6}
+                sx={{ cursor: 'pointer' }}
+              >
+                <Typography color={'#A5FFBE'}>{chain?.name}</Typography>
+                <Icon />
+              </Stack>
             }
           >
             <>
@@ -147,7 +154,6 @@ export function SelectTokenPanel({
               ))}
             </>
           </PopperCard>
-          <Icon />
         </Stack>
         <Typography color={'#7A9283'} fontWeight={600} fontSize={16} lineHeight={'24px'}>
           Balance: {balance?.toSignificant() || '--'}
