@@ -126,6 +126,7 @@ export default function Fungible() {
               <Typography fontSize={22} color={'#A5FFBE'}>
                 {'Transaction confirmed' || 'Transaction success'}
               </Typography>
+              <br />
               <Typography color={'#7A9283'}>
                 The Token is expected to be received on the target chain in a few minutes
               </Typography>
@@ -137,7 +138,7 @@ export default function Fungible() {
       hideModal()
       showModal(
         <MessageBox type="error">
-          {err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
+          {err?.reason || err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
         </MessageBox>
       )
       console.error(err)
