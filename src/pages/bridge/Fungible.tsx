@@ -51,7 +51,7 @@ const tokenList: MultiChainToken[] = [
         chainId: ChainId.LOOT,
         isNative: false,
         contractAddress: '0x78e0AeCd5Bbfd12557632106B0B4332BA04a6556',
-        decimals: 18
+        decimals: 6
       }
     ]
   },
@@ -71,7 +71,7 @@ const tokenList: MultiChainToken[] = [
         chainId: ChainId.LOOT,
         isNative: false,
         contractAddress: '0xccf83073b64c987D1ca9028055864C9bC66Db838',
-        decimals: 18
+        decimals: 6
       }
     ]
   },
