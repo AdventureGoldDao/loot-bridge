@@ -169,7 +169,6 @@ export function useTransferErc20HistoryList(account: string) {
 }
 
 export function useGetNFTDetail(account: string, chainId: number, nftAddress: string) {
-  console.log('nftAddress', nftAddress)
   return useRequest(
     async () => {
       const res = await getUserNFT721Detail(account, chainId, nftAddress)
