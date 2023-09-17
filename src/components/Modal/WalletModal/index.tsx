@@ -99,6 +99,7 @@ export default function WalletModal({
             }.`}
           </Box>
           <ActionButton
+            width="100%"
             onAction={() => {
               const id = Object.values(ChainId).find(val => val === NETWORK_CHAIN_ID)
               if (!id) {
