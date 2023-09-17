@@ -7,7 +7,6 @@ import { HideOnMobile, ShowOnMobile } from 'theme/index'
 import PlainSelect from 'components/Select/PlainSelect'
 import Image from 'components/Image'
 import logo from '../../assets/images/agld.png'
-import { routes } from 'constants/routes'
 import MobileMenu from './MobileMenu'
 import NetworkSelect from './NetworkSelect'
 import Icon from 'assets/svg/arrow.svg'
@@ -25,9 +24,7 @@ interface Tab extends TabContent {
 }
 
 export const Tabs: Tab[] = [
-  { title: 'Block Explorer', route: routes.EXPLORER, icon: 'use' },
-  { title: 'Bridge between Loot rollup and Goerli', route: routes.BRIDGE, icon: 'use' },
-  { title: 'Docs', link: '' }
+  { title: 'Docs', link: 'https://loot-chain.gitbook.io/loot-chain-documentation/getting-started/overview' }
 ]
 
 const navLinkSX = ({ theme }: any) => ({
@@ -99,7 +96,6 @@ const Filler = styled('div')(({ theme }) => ({
 
 const MainLogo = styled(Link)(({ theme }) => ({
   '& img': {
-    width: 109.78,
     height: 23
   },
   '&:hover': {
@@ -139,94 +135,90 @@ export default function Header() {
             <Image src={logo} alt={'logo'} />
           </MainLogo>
           <HideOnMobile breakpoint="md">
-            {pathname === '/bridge' ? (
-              ''
-            ) : (
-              <LinksWrapper>
-                {Tabs.map(({ title, route, subTab, link, titleContent, icon }, idx) =>
-                  subTab ? (
-                    <Box
-                      sx={{
-                        marginRight: {
-                          xs: 15,
-                          lg: 48
-                        },
-                        height: 'auto',
-                        paddingBottom: '30px',
-                        borderBottom: '2px solid transparent',
-                        borderColor: theme =>
-                          subTab.some(tab => tab.route && pathname.includes(tab.route))
-                            ? theme.palette.text.primary
-                            : 'transparnet',
-                        display: 'inline'
+            <LinksWrapper>
+              {Tabs.map(({ title, route, subTab, link, titleContent, icon }, idx) =>
+                subTab ? (
+                  <Box
+                    sx={{
+                      marginRight: {
+                        xs: 15,
+                        lg: 48
+                      },
+                      height: 'auto',
+                      paddingBottom: '30px',
+                      borderBottom: '2px solid transparent',
+                      borderColor: theme =>
+                        subTab.some(tab => tab.route && pathname.includes(tab.route))
+                          ? theme.palette.text.primary
+                          : 'transparnet',
+                      display: 'inline'
+                    }}
+                    key={title + idx}
+                  >
+                    <PlainSelect
+                      key={title + idx}
+                      placeholder={title}
+                      autoFocus={false}
+                      width={title === 'Test' ? '70px' : undefined}
+                      style={{
+                        height: '16px'
                       }}
-                      key={title + idx}
                     >
-                      <PlainSelect
-                        key={title + idx}
-                        placeholder={title}
-                        autoFocus={false}
-                        width={title === 'Test' ? '70px' : undefined}
-                        style={{
-                          height: '16px'
-                        }}
-                      >
-                        {subTab.map((sub, idx) =>
-                          sub.link ? (
-                            <MenuItem
-                              key={sub.link + idx}
-                              sx={{ backgroundColor: 'transparent!important', background: 'transparent!important' }}
-                              selected={false}
+                      {subTab.map((sub, idx) =>
+                        sub.link ? (
+                          <MenuItem
+                            key={sub.link + idx}
+                            sx={{ backgroundColor: 'transparent!important', background: 'transparent!important' }}
+                            selected={false}
+                          >
+                            <ExternalLink
+                              href={sub.link}
+                              className={'link'}
+                              color="#00000050"
+                              sx={{
+                                '&:hover': {
+                                  color: '#232323!important'
+                                }
+                              }}
                             >
-                              <ExternalLink
-                                href={sub.link}
-                                className={'link'}
-                                color="#00000050"
-                                sx={{
-                                  '&:hover': {
-                                    color: '#232323!important'
-                                  }
-                                }}
-                              >
-                                {sub.titleContent ?? sub.title}
-                              </ExternalLink>
-                            </MenuItem>
-                          ) : (
-                            <MenuItem key={sub.title + idx}>
-                              <StyledNavLink to={sub.route ?? ''}>{sub.titleContent ?? sub.title}</StyledNavLink>
-                            </MenuItem>
-                          )
-                        )}
-                      </PlainSelect>
-                    </Box>
-                  ) : link ? (
-                    <ExternalLink href={link} className={'link'} key={link + idx} style={{ fontSize: 14 }}>
-                      {titleContent ?? title}
-                    </ExternalLink>
-                  ) : (
-                    <Link
-                      key={title + idx}
-                      id={`${route}-nav-link`}
-                      to={route ?? ''}
-                      className={
-                        (route
-                          ? pathname.includes(route)
+                              {sub.titleContent ?? sub.title}
+                            </ExternalLink>
+                          </MenuItem>
+                        ) : (
+                          <MenuItem key={sub.title + idx}>
+                            <StyledNavLink to={sub.route ?? ''}>{sub.titleContent ?? sub.title}</StyledNavLink>
+                          </MenuItem>
+                        )
+                      )}
+                    </PlainSelect>
+                  </Box>
+                ) : link ? (
+                  <ExternalLink href={link} className={'link'} key={link + idx} style={{ fontSize: 14 }}>
+                    {titleContent ?? title}
+                  </ExternalLink>
+                ) : (
+                  <Link
+                    key={title + idx}
+                    id={`${route}-nav-link`}
+                    to={route ?? ''}
+                    className={
+                      (route
+                        ? pathname.includes(route)
+                          ? 'active'
+                          : pathname.includes('account')
+                          ? route.includes('account')
                             ? 'active'
-                            : pathname.includes('account')
-                            ? route.includes('account')
-                              ? 'active'
-                              : ''
                             : ''
-                          : '') + ' link'
-                      }
-                    >
-                      {titleContent ?? title}
-                      {icon ? <Image src={Icon} alt="" /> : ''}
-                    </Link>
-                  )
-                )}
-              </LinksWrapper>
-            )}
+                          : ''
+                        : '') + ' link'
+                    }
+                  >
+                    {titleContent ?? title}
+                    {icon ? <Image src={Icon} alt="" /> : ''}
+                  </Link>
+                )
+              )}
+            </LinksWrapper>
           </HideOnMobile>
         </Box>
         {pathname === '/home' ? (

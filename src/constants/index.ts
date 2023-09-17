@@ -12,12 +12,8 @@ export const BAST_TOKEN: { [chainId in ChainId]?: Currency } = {
 
 export const SELECTABLE_ENABLE_WALLETS: ConnectionType[] = [
   ConnectionType.INJECTED,
-  ConnectionType.WALLET_CONNECT_V2,
+  ConnectionType.WALLET_CONNECT_V2
   // ConnectionType.UNISWAP_WALLET_V2,
-  ConnectionType.OKX_WALLET,
-  ConnectionType.GNOSIS_SAFE,
-  ConnectionType.BINANCE_WALLET,
-  ConnectionType.COINBASE_WALLET
 ]
 
 export const serverBaseUrl = process.env.REACT_APP_SERVER_BASE_URL

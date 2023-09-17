@@ -8,8 +8,6 @@ import { Props } from './TxHistory'
 import moment from 'moment'
 
 function TopPanel({ direction, detailData }: { direction: 'From' | 'To'; detailData: Props }) {
-  console.log('detailData', detailData)
-
   return (
     <Stack
       mt={18}
@@ -63,7 +61,9 @@ function TopPanel({ direction, detailData }: { direction: 'From' | 'To'; detailD
               )
             }}
           >
-            {shortenHash(direction === 'From' ? detailData?.sentTx || '' : detailData?.receivedTx || '')}
+            {shortenHash(
+              direction === 'From' ? detailData?.sentTx || 'Confirming' : detailData?.receivedTx || 'Confirming'
+            )}
           </span>
         </Typography>
       </Box>

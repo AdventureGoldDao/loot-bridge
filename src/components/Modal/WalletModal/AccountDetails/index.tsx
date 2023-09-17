@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { useDispatch } from 'react-redux'
-import { Typography, Box, useTheme, styled, Button } from '@mui/material'
+import { Typography, Box, useTheme, Button } from '@mui/material'
 import { useActiveWeb3React } from 'hooks/'
 import { AppDispatch } from 'state/'
 import { clearAllTransactions } from 'state/transactions/actions'
@@ -13,14 +13,15 @@ import Transaction from './Transaction'
 import { OutlinedCard } from 'components/Card'
 import { useAppSelector } from 'state/hooks'
 import { getConnection } from 'connection'
+import LogoText from 'components/LogoText'
 
-const Dot = styled('span')({
-  width: 24,
-  height: 24,
-  background: 'linear-gradient(135deg, #ffffff 4.17%, rgba(255, 255, 255, 0) 75%)',
-  border: '0.6px solid #ffffff',
-  borderRadius: '50%'
-})
+// const Dot = styled('span')({
+//   width: 24,
+//   height: 24,
+//   background: 'linear-gradient(135deg, #ffffff 4.17%, rgba(255, 255, 255, 0) 75%)',
+//   border: '0.6px solid #ffffff',
+//   borderRadius: '50%'
+// })
 
 function renderTransactions(transactions: string[]) {
   return (
@@ -47,7 +48,7 @@ export default function AccountDetails({
   ENSName,
   openOptions
 }: AccountDetailsProps) {
-  const { chainId, account, connector, deactivate } = useActiveWeb3React()
+  const { chainId, account, deactivate } = useActiveWeb3React()
   const dispatch = useDispatch<AppDispatch>()
   const theme = useTheme()
   const selectedWallet = useAppSelector(state => state.userWallet.selectedWallet)
@@ -103,7 +104,7 @@ export default function AccountDetails({
           color={'#fff'}
           id="web3-account-identifier-row"
         >
-          {connector && <Dot />}
+          {curConnection?.getIcon && <LogoText logo={curConnection.getIcon(true)} />}
           {ENSName ? <span> {ENSName}</span> : <span> {account && shortenAddress(account)}</span>}
         </Box>
 
