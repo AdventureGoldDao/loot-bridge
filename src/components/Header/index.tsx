@@ -137,6 +137,22 @@ export default function Header() {
           </MainLogo>
           <HideOnMobile breakpoint="md">
             <LinksWrapper>
+              <Stack
+                onClick={() => window.open('https://mainnet.lootchain.com/bridge', '_blank')}
+                sx={{
+                  cursor: 'pointer',
+                  padding: '4px 16px',
+                  borderRadius: '20px',
+                  fontSize: 14,
+                  fontWeight: 700,
+                  color: '#A5FFBE',
+                  border: '1px solid #4B5954',
+                  backgroundColor: '#020202',
+                  marginRight: 50
+                }}
+              >
+                V1
+              </Stack>
               {Tabs.map(({ title, route, subTab, link, titleContent, icon }, idx) =>
                 subTab ? (
                   <Box
@@ -222,50 +238,31 @@ export default function Header() {
             </LinksWrapper>
           </HideOnMobile>
         </Box>
-        {pathname === '/home' ? (
-          <></>
-        ) : (
-          <Box display="flex" alignItems="center" gap={{ xs: '6px', sm: '20px' }}>
-            <Stack
-              onClick={() => window.open('https://mainnet.lootchain.com/bridge', '_blank')}
+        <Box display="flex" alignItems="center" gap={{ xs: '6px', sm: '20px' }}>
+          <NetworkSelect />
+          <Web3Status />
+          <ShowOnMobile breakpoint="md">
+            <IconButton
               sx={{
-                cursor: 'pointer',
-                padding: '4px 16px',
-                borderRadius: '20px',
-                fontSize: 14,
-                fontWeight: 700,
-                color: '#A5FFBE',
-                border: '1px solid #4B5954',
-                backgroundColor: '#020202'
+                border: '1px solid rgba(0, 0, 0, 0.1)',
+                height: { xs: 24, sm: 32 },
+                width: { xs: 24, sm: 32 },
+                mb: { xs: 0, sm: 15 },
+                mt: { xs: 0, sm: 8 },
+                padding: '4px',
+                borderRadius: '8px'
+              }}
+              onClick={() => {
+                setMobileMenuOpen(open => !open)
               }}
             >
-              V1
-            </Stack>
-            <NetworkSelect />
-            <Web3Status />
-            <ShowOnMobile breakpoint="md">
-              <IconButton
-                sx={{
-                  border: '1px solid rgba(0, 0, 0, 0.1)',
-                  height: { xs: 24, sm: 32 },
-                  width: { xs: 24, sm: 32 },
-                  mb: { xs: 0, sm: 15 },
-                  mt: { xs: 0, sm: 8 },
-                  padding: '4px',
-                  borderRadius: '8px'
-                }}
-                onClick={() => {
-                  setMobileMenuOpen(open => !open)
-                }}
-              >
-                <svg width="14" height="8" viewBox="0 0 14 8" fill="none" stroke="#252525">
-                  <path d="M1 1H13" strokeWidth="1.4" strokeLinecap="round" />
-                  <path d="M1 7H13" strokeWidth="1.4" strokeLinecap="round" />
-                </svg>
-              </IconButton>
-            </ShowOnMobile>
-          </Box>
-        )}
+              <svg width="14" height="8" viewBox="0 0 14 8" fill="none" stroke="#252525">
+                <path d="M1 1H13" strokeWidth="1.4" strokeLinecap="round" />
+                <path d="M1 7H13" strokeWidth="1.4" strokeLinecap="round" />
+              </svg>
+            </IconButton>
+          </ShowOnMobile>
+        </Box>
       </StyledAppBar>
     </>
   )
