@@ -95,7 +95,7 @@ const Filler = styled('div')(({ theme }) => ({
   }
 }))
 
-const MainLogo = styled(Link)(({ theme }) => ({
+const MainLogo = styled(ExternalLink)(({ theme }) => ({
   '& img': {
     height: 23
   },
@@ -132,7 +132,7 @@ export default function Header() {
       <Filler />
       <StyledAppBar>
         <Box display="flex" alignItems="center" justifyContent={'space-between'} width={'100%'}>
-          <MainLogo id={'logo'} to={'/'}>
+          <MainLogo id={'logo'} href={'https://mainnet.lootchain.com'}>
             <Image src={logo} alt={'logo'} />
           </MainLogo>
           <HideOnMobile breakpoint="md">
