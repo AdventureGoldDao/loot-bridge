@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { AppBar, Box, IconButton, MenuItem, styled as muiStyled, styled } from '@mui/material'
+import { AppBar, Box, IconButton, MenuItem, Stack, styled as muiStyled, styled } from '@mui/material'
 import { ExternalLink } from 'theme/components'
 import Web3Status from './Web3Status'
 import { HideOnMobile, ShowOnMobile } from 'theme/index'
@@ -225,6 +225,21 @@ export default function Header() {
           <></>
         ) : (
           <Box display="flex" alignItems="center" gap={{ xs: '6px', sm: '20px' }}>
+            <Stack
+              onClick={() => window.open('https://mainnet.lootchain.com/bridge', '_blank')}
+              sx={{
+                cursor: 'pointer',
+                padding: '4px 16px',
+                borderRadius: '20px',
+                fontSize: 14,
+                fontWeight: 700,
+                color: '#A5FFBE',
+                border: '1px solid #4B5954',
+                backgroundColor: '#020202'
+              }}
+            >
+              V1
+            </Stack>
             <NetworkSelect />
             <Web3Status />
             <ShowOnMobile breakpoint="md">
