@@ -24,6 +24,7 @@ interface Tab extends TabContent {
 }
 
 export const Tabs: Tab[] = [
+  { title: 'Explorer', link: 'https://explorer.lootchain.com/' },
   { title: 'Docs', link: 'https://loot-chain.gitbook.io/loot-chain-documentation/getting-started/overview' }
 ]
 
