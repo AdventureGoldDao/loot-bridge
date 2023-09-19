@@ -19,8 +19,6 @@ export const SELECTABLE_ENABLE_WALLETS: ConnectionType[] = [
 export const serverBaseUrl = process.env.REACT_APP_SERVER_BASE_URL
 
 export const TRANSFER_NFT_ADDRESS: { [chainId in ChainId]?: string } = {
-  // [ChainId.MUMBAI_POLYGON]: '0xE189dcED33fD18D379Ed8455a972fDA7FA822F5F',
-  // [ChainId.BSCTEST]: '0x1EFB2Cb5015FDd13120dF72BB152c8Ec91bCD68e'
   [ChainId.LOOT]: '0x341dC75Ae3074f1eBf053fd7Ae5b92A57634cD3A',
   [ChainId.MAINNET]: '0x341dC75Ae3074f1eBf053fd7Ae5b92A57634cD3A'
 }

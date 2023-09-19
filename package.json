@@ -1,6 +1,7 @@
 {
   "name": "bridge-interface",
   "description": "Interface",
+  "version": "0.0.1",
   "homepage": "/",
   "private": true,
   "devDependencies": {
