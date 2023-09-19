@@ -56,24 +56,24 @@ export const NFTList: MultiChainERC721[] = [
       }
     ]
   },
-  {
-    id: 1,
-    name: 'MLOOT',
-    nativeAddress: '0x1dfe7Ca09e99d10835Bf73044a23B73Fc20623DF',
-    tokens: [
-      {
-        chainId: ChainId.MAINNET,
-        isNative: true,
-        nativeAddress: '0x1dfe7Ca09e99d10835Bf73044a23B73Fc20623DF',
-        contractAddress: '0x77d9e6fd235A18927ED117B63Cf221e91D4CD302'
-      },
-      {
-        chainId: ChainId.LOOT,
-        isNative: false,
-        contractAddress: '0x77d9e6fd235A18927ED117B63Cf221e91D4CD302'
-      }
-    ]
-  },
+  // {
+  //   id: 1,
+  //   name: 'MLOOT',
+  //   nativeAddress: '0x1dfe7Ca09e99d10835Bf73044a23B73Fc20623DF',
+  //   tokens: [
+  //     {
+  //       chainId: ChainId.MAINNET,
+  //       isNative: true,
+  //       nativeAddress: '0x1dfe7Ca09e99d10835Bf73044a23B73Fc20623DF',
+  //       contractAddress: '0x77d9e6fd235A18927ED117B63Cf221e91D4CD302'
+  //     },
+  //     {
+  //       chainId: ChainId.LOOT,
+  //       isNative: false,
+  //       contractAddress: '0x77d9e6fd235A18927ED117B63Cf221e91D4CD302'
+  //     }
+  //   ]
+  // },
   {
     id: 2,
     name: 'DeGods',
