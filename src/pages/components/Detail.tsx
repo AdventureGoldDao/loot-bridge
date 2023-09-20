@@ -61,8 +61,13 @@ function TopPanel({ direction, detailData }: { direction: 'From' | 'To'; detailD
               )
             }}
           >
-            {direction === 'From' && detailData?.sentTx ? shortenHash(detailData?.sentTx) : 'Confirming'}
-            {direction === 'To' && detailData?.receivedTx ? shortenHash(detailData?.receivedTx) : 'Confirming'}
+            {direction === 'From'
+              ? detailData?.sentTx
+                ? shortenHash(detailData?.sentTx)
+                : 'Confirming'
+              : detailData?.receivedTx
+              ? shortenHash(detailData?.receivedTx)
+              : 'Confirming'}
           </span>
         </Typography>
       </Box>
