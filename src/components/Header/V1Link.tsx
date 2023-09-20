@@ -9,6 +9,10 @@ export default function V1Link() {
       sx={{
         width: 70,
         height: 27,
+        marginRight: {
+          xs: 0,
+          lg: 48
+        },
         marginTop: '-8px',
         cursor: 'pointer',
         backgroundColor: '#020202',
