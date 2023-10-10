@@ -77,7 +77,7 @@ const tokenList: MultiChainToken[] = [
   },
   {
     id: 2,
-    name: 'DAI',
+    name: 'DAI(v2)',
     logo: 'https://assets.coingecko.com/coins/images/9956/small/Badge_Dai.png?1687143508',
     tokens: [
       {
