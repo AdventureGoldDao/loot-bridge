@@ -73,7 +73,7 @@ export default function V1Link() {
           'aria-labelledby': 'basic-button'
         }}
       >
-        <MenuItem onClick={() => window.open('https://mainnet.lootchain.com/bridge', '_blank')}>V1</MenuItem>
+        <MenuItem onClick={() => window.open('https://mainnetv1.lootchain.com/bridge', '_blank')}>V1</MenuItem>
         <MenuItem onClick={handleClose}>V2</MenuItem>
       </Menu>
     </Stack>
