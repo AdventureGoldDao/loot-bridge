@@ -4,6 +4,7 @@ import { ReactComponent as Icon } from '../../pages/components/arrow_icon.svg'
 
 export default function V1Link() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const [vText, setVText] = useState('V1')
   const open = Boolean(anchorEl)
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)
@@ -45,7 +46,7 @@ export default function V1Link() {
         fontWeight={700}
         color={'#A5FFBE'}
       >
-        V1
+        {vText}
         <Icon style={{ marginLeft: '5px' }} />
       </Typography>
       <Menu
@@ -74,7 +75,14 @@ export default function V1Link() {
         }}
       >
         <MenuItem onClick={() => window.open('https://mainnetv1.lootchain.com/bridge', '_blank')}>V1</MenuItem>
-        <MenuItem onClick={handleClose}>V2</MenuItem>
+        <MenuItem
+          onClick={() => {
+            setVText('V2')
+            handleClose()
+          }}
+        >
+          V2
+        </MenuItem>
       </Menu>
     </Stack>
   )
