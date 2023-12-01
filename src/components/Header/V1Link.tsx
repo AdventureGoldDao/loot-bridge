@@ -4,7 +4,7 @@ import { ReactComponent as Icon } from '../../pages/components/arrow_icon.svg'
 
 export default function V1Link() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-  const [vText, setVText] = useState('V1')
+  const [vText, setVText] = useState('V2')
   const open = Boolean(anchorEl)
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)
