@@ -4,7 +4,7 @@ import { ReactComponent as Icon } from '../../pages/components/arrow_icon.svg'
 
 export default function V1Link() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-  const [vText, setVText] = useState('V2')
+  const [vText, setVText] = useState('Bridge V2')
   const open = Boolean(anchorEl)
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)
@@ -18,7 +18,7 @@ export default function V1Link() {
       alignItems={'center'}
       direction={'row'}
       sx={{
-        width: 70,
+        width: 100,
         height: 27,
         marginRight: {
           xs: 0,
@@ -74,14 +74,14 @@ export default function V1Link() {
           'aria-labelledby': 'basic-button'
         }}
       >
-        <MenuItem onClick={() => window.open('https://mainnetv1.lootchain.com/bridge', '_blank')}>V1</MenuItem>
+        <MenuItem onClick={() => window.open('https://mainnetv1.lootchain.com/bridge', '_blank')}>Bridge V1</MenuItem>
         <MenuItem
           onClick={() => {
-            setVText('V2')
+            setVText('Bridge V2')
             handleClose()
           }}
         >
-          V2
+          Bridge V2
         </MenuItem>
       </Menu>
     </Stack>
